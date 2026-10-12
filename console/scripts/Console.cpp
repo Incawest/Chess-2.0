@@ -11,6 +11,16 @@ Console::Color::~Color() = default;
 
 Console::~Console() = default;
 
+const Console::RGB* Console::GetTextColor()
+{
+    return _textColor;
+}
+
+const Console::RGB* Console::GetBGColor()
+{
+    return _bgColor;
+}
+
 void Console::SetTextColor(const RGB* color)
 {
     if (color != nullptr)
@@ -20,6 +30,7 @@ void Console::SetTextColor(const RGB* color)
                 << color->r << L';'
                 << color->g << L';'
                 << color->b << L'm';
+        _textColor = color;
     }
 }
 
@@ -32,12 +43,15 @@ void Console::SetBGColor(const RGB* color)
             << color->r << L';'
             << color->g << L';'
             << color->b << L'm';
+        _bgColor = color;
     }
 }
 
 void Console::ResetConsoleColor()
 {
     std::wcout << L"\x1b[0m";
+    _textColor = &Color::BLACK;
+    _bgColor = &Color::WHITE;
 }
 
 void Console::ResetCaret()

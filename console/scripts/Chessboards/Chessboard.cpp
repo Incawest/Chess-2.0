@@ -6,8 +6,8 @@ Chessboard::Chessboard(int boardSize, bool isActive): _chessBoardSize{boardSize}
 {
 	BuildChessboard();
 
-	_totalWidth = _chessBoardSize * (Cell::WIDTH+1) + 1;
-	_totalHeight = _chessBoardSize * Cell::HEIGHT;
+	_totalWidth = _chessBoardSize * (BaseBoardCell::WIDTH + 1) + 1;
+	_totalHeight = _chessBoardSize * BaseBoardCell::HEIGHT;
 }
 
 void Chessboard::Update()
@@ -27,7 +27,7 @@ void Chessboard::BuildChessboard()
 		const int rowOffset = i * _chessBoardSize;
 	    for (int j = 0; j < _chessBoardSize; ++j)
 	    {
-	        _cells[rowOffset+j] = std::make_unique<Cell>(&Console::Color::WHITE);
+	        _cells[rowOffset+j] = std::make_unique<BaseBoardCell>();
 	    }
 	}
 }
@@ -43,7 +43,7 @@ void Chessboard::PrintChessboard() const
 
 	for (std::size_t cellRow = 0; cellRow < _chessBoardSize; ++cellRow)
 	{
-	    for (std::size_t cellLine = 0; cellLine < Cell::HEIGHT; ++cellLine)
+	    for (std::size_t cellLine = 0; cellLine < BaseBoardCell::HEIGHT; ++cellLine)
 	    {
 
 	        std::wcout << ChessboardParts::LEFT_BORDER << L' ';
@@ -57,7 +57,6 @@ void Chessboard::PrintChessboard() const
 	            _cells[cellIndex]->DrawCell(cellLine);
 	        }
 
-			Console::SetTextColor(&Color::WHITE);
 	        std::wcout << ChessboardParts::RIGHT_BORDER << std::endl;
 	    }
 	}

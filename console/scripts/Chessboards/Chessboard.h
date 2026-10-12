@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "Cell.h"
+#include "BaseBoardCell.h"
 #include "Console.h"
 #include "IUpdatable.h"
 
@@ -13,7 +13,7 @@ class Chessboard : public IUpdatable
 {
 private:
 	bool _isActive;
-	std::vector<std::unique_ptr<Cell>> _cells;
+	std::vector<std::unique_ptr<BaseBoardCell>> _cells;
 	int _chessBoardSize;
 
 protected:

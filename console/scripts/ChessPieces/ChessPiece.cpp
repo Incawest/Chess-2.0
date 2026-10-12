@@ -40,7 +40,9 @@ void ChessPiece::SetPosition(int col, int row)
 
 void ChessPiece::DrawPiece() const
 {
+    auto pastTextColor = Console::GetTextColor();
     Console::SetTextColor(_figureColor);
     std::wcout << L' ' << _character << L' ';
+    Console::SetTextColor(pastTextColor);
 }
 

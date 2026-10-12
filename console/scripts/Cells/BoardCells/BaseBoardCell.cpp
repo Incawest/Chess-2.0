@@ -1,22 +1,28 @@
-#include "Cell.h"
+#include "BaseBoardCell.h"
 
-Cell::CellboardParts::~CellboardParts() = default;
+BaseBoardCell::CellboardParts::~CellboardParts() = default;
 
-Cell::Cell() = default;
+BaseBoardCell::BaseBoardCell() = default;
 
-Cell::Cell(const RGB* cellColor) : _cellColor{cellColor}
+BaseBoardCell::BaseBoardCell(const RGB* cellColor) : _cellColor{cellColor}
 {
 }
 
-Cell::Cell(const RGB* cellColor, std::weak_ptr<ChessPiece> piece) : Cell(cellColor) 
+BaseBoardCell::BaseBoardCell(const RGB* cellColor, std::weak_ptr<ChessPiece> piece) : BaseBoardCell(cellColor) 
 {
     SetPieceOnCell(piece);
 }
 
 
-void Cell::DrawCell(int line) const
+void BaseBoardCell::DrawCell(int line) const
 {
-    Console::SetTextColor(_cellColor);
+    const RGB* pastTextColor = nullptr;
+    if (_cellColor != nullptr)
+    {
+        pastTextColor = Console::GetTextColor();
+        Console::SetTextColor(_cellColor);
+    }
+
     if (line == 0)
     {
         std::wcout << CellboardParts::TOP_LEFT_CORNER;
@@ -37,24 +43,27 @@ void Cell::DrawCell(int line) const
         auto piece = _piece.lock();
         if (piece != nullptr) 
         {
-            piece->DrawPiece();
-            Console::SetTextColor(_cellColor);
+            if (_cellColor != nullptr)
+                piece->DrawPiece();
         }
         else
             std::wcout << L' ' << L' ' << L' ';
 
         std::wcout << CellboardParts::VERTICAL_BORDER << L' ';
     }
+
+    if (_cellColor != nullptr)
+        Console::SetTextColor(pastTextColor);
 }
 
-void Cell::SetPieceOnCell(
+void BaseBoardCell::SetPieceOnCell(
     std::weak_ptr<ChessPiece> piece
 ) 
 {
     _piece = piece;
 }
 
-const RGB* Cell::GetPieceColor() const
+const RGB* BaseBoardCell::GetPieceColor() const
 {
     auto piece = _piece.lock();
     if ( piece != nullptr)
@@ -67,7 +76,7 @@ const RGB* Cell::GetPieceColor() const
     }
 }
 
-const RGB* Cell::GetCellColor() const
+const RGB* BaseBoardCell::GetCellColor() const
 {
     return _cellColor;
 }

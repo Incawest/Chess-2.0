@@ -10,7 +10,7 @@
 using Color = Console::Color;
 using RGB = Console::RGB;
 
-class Cell
+class BaseBoardCell
 {
 private:
     std::weak_ptr<ChessPiece> _piece;
@@ -25,13 +25,13 @@ private:
     static inline constexpr int _HORIZONTAL_WIDTH = WIDTH - 2;
 
 public:
-    Cell();
-    Cell(const RGB* cellColor);
-    Cell(
+    BaseBoardCell();
+    BaseBoardCell(const RGB* cellColor);
+    BaseBoardCell(
         const RGB* cellColor,
         std::weak_ptr<ChessPiece> piece
     );
-    void DrawCell(int index) const;
+    void DrawCell(int line) const;
     void SetPieceOnCell(
         std::weak_ptr<ChessPiece> piece
     );
