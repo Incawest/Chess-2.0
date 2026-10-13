@@ -21,7 +21,6 @@
 "-I"
 "D:/Links/chess-2.0/console/scripts/VSCode"
 "D:/Links/chess-2.0/console/scripts/Cells/BoardCells/BaseBoardCell.cpp"
-"D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/BaseEdgeCell.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/CornerEdgeCells/BaseCornerEdgeCell.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/CornerEdgeCells/BottomLeftCornerEdgeCell.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/CornerEdgeCells/BottomRightCornerEdgeCell.cpp"

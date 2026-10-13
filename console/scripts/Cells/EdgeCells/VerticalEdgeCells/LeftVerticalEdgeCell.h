@@ -1,3 +1,5 @@
+#pragma once
+
 #include "BaseVerticalEdgeCell.h"
 
 class LeftVerticalEdgeCell : public BaseVerticalEdgeCell
@@ -5,7 +7,7 @@ class LeftVerticalEdgeCell : public BaseVerticalEdgeCell
 public:
     LeftVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit);
     LeftVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit, const RGB* cellColor);
-    virtual void DrawCell(int line) const override;
+    void DrawCell(int line) const override;
 protected:
     virtual void DrawMarkedDigitAndEdge() const override;
 };

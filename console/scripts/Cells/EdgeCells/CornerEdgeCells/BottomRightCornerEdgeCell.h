@@ -1,3 +1,5 @@
+#pragma once
+
 #include "BaseCornerEdgeCell.h"
 
 class BottomRightCornerEdgeCell : public BaseCornerEdgeCell

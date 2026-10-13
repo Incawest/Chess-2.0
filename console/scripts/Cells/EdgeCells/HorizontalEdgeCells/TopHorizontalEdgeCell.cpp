@@ -1,12 +1,12 @@
 #include "TopHorizontalEdgeCell.h"
 
 TopHorizontalEdgeCell::TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter) :
-    BaseHorizontalEdgeCell(edgeChar, markedLetter), _LAST_LINE{HEIGHT - 1}, _NEXT_TO_LAST_LINE{HEIGHT - 2}
+    BaseHorizontalEdgeCell(edgeChar, markedLetter)
 {
 }
 
 TopHorizontalEdgeCell::TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor) :
-    BaseHorizontalEdgeCell(edgeChar, markedLetter, cellColor), _LAST_LINE{HEIGHT - 1}, _NEXT_TO_LAST_LINE{HEIGHT - 2}
+    BaseHorizontalEdgeCell(edgeChar, markedLetter, cellColor)
 {
 }
 

@@ -4,21 +4,18 @@
 #include <memory>
 #include <vector>
 
+#include "BaseCell.h"
 #include "ChessPiece.h"
 #include "Console.h"
 
 using Color = Console::Color;
 using RGB = Console::RGB;
 
-class BaseBoardCell
+class BaseBoardCell : public BaseCell<5, 3>
 {
 private:
     std::weak_ptr<ChessPiece> _piece;
     const RGB* _cellColor = nullptr;
-
-public:
-    static inline constexpr int WIDTH = 5;  
-    static inline constexpr int HEIGHT = 3;
 
 private:
     static inline constexpr int _LAST_LINE = HEIGHT - 1;
@@ -31,12 +28,12 @@ public:
         const RGB* cellColor,
         std::weak_ptr<ChessPiece> piece
     );
-    void DrawCell(int line) const;
+    const RGB* GetPieceColor() const;
+    const RGB* GetCellColor() const;
     void SetPieceOnCell(
         std::weak_ptr<ChessPiece> piece
     );
-    const RGB* GetPieceColor() const;
-    const RGB* GetCellColor() const;
+    virtual void DrawCell(int line) const override;
 
 private:
     struct CellboardParts final

@@ -1,9 +1,11 @@
+#pragma once
+
 #include "BaseEdgeCell.h"
 
-class BaseCornerEdgeCell : public BaseEdgeCell
+class BaseCornerEdgeCell : public BaseEdgeCell<2, 2>
 {
 protected:
-    const int _LAST_COL;
+    static inline constexpr int _LAST_COL = WIDTH - 1;
 public:
     BaseCornerEdgeCell(wchar_t edgeChar);
     BaseCornerEdgeCell(wchar_t edgeChar, const RGB* cellColor);

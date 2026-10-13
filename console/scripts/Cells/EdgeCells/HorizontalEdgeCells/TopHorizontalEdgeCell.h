@@ -1,13 +1,15 @@
+#pragma once
+
 #include "BaseHorizontalEdgeCell.h"
 
 class TopHorizontalEdgeCell : public BaseHorizontalEdgeCell
 {
 private:
-    const int _LAST_LINE;
-    const int _NEXT_TO_LAST_LINE;
+    static inline constexpr int _LAST_LINE = HEIGHT - 1;
+    static inline constexpr const int _NEXT_TO_LAST_LINE = _LAST_LINE - 1;
 
 public:
     TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter);
     TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor);
-    virtual void DrawCell(int line) const override;
+    void DrawCell(int line) const override;
 };

@@ -1,9 +1,11 @@
+#pragma once
+
 #include "BaseEdgeCell.h"
 
-class BaseHorizontalEdgeCell : public BaseEdgeCell
+class BaseHorizontalEdgeCell : public BaseEdgeCell<5, 2>
 {
 protected:
-    const int _HALF_WIDTH;
+    static inline constexpr int _HALF_WIDTH = WIDTH / 2;
     const wchar_t _MARKED_LETTER;
 
 public:

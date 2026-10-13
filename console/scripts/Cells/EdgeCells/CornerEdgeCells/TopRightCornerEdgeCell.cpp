@@ -1,12 +1,12 @@
 #include "TopRightCornerEdgeCell.h"
 
 TopRightCornerEdgeCell::TopRightCornerEdgeCell(wchar_t edgeChar) : 
-    BaseCornerEdgeCell(edgeChar), _LAST_LINE{HEIGHT - 1}
+    BaseCornerEdgeCell(edgeChar)
 {
 }
 
 TopRightCornerEdgeCell::TopRightCornerEdgeCell(wchar_t edgeChar, const RGB* cellColor) : 
-    BaseCornerEdgeCell(edgeChar, cellColor), _LAST_LINE{HEIGHT - 1}
+    BaseCornerEdgeCell(edgeChar, cellColor)
 {
 }
 

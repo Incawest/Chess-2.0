@@ -13,6 +13,30 @@ BaseBoardCell::BaseBoardCell(const RGB* cellColor, std::weak_ptr<ChessPiece> pie
     SetPieceOnCell(piece);
 }
 
+const RGB* BaseBoardCell::GetPieceColor() const
+{
+    auto piece = _piece.lock();
+    if ( piece != nullptr)
+    {
+        return piece->GetColor();
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+const RGB* BaseBoardCell::GetCellColor() const
+{
+    return _cellColor;
+}
+
+void BaseBoardCell::SetPieceOnCell(
+    std::weak_ptr<ChessPiece> piece
+) 
+{
+    _piece = piece;
+}
 
 void BaseBoardCell::DrawCell(int line) const
 {
@@ -47,36 +71,11 @@ void BaseBoardCell::DrawCell(int line) const
                 piece->DrawPiece();
         }
         else
-            std::wcout << L' ' << L' ' << L' ';
+            DrawEmptyLine(_HORIZONTAL_WIDTH);
 
         std::wcout << CellboardParts::VERTICAL_BORDER << L' ';
     }
 
     if (_cellColor != nullptr)
         Console::SetTextColor(pastTextColor);
-}
-
-void BaseBoardCell::SetPieceOnCell(
-    std::weak_ptr<ChessPiece> piece
-) 
-{
-    _piece = piece;
-}
-
-const RGB* BaseBoardCell::GetPieceColor() const
-{
-    auto piece = _piece.lock();
-    if ( piece != nullptr)
-    {
-        return piece->GetColor();
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
-const RGB* BaseBoardCell::GetCellColor() const
-{
-    return _cellColor;
 }

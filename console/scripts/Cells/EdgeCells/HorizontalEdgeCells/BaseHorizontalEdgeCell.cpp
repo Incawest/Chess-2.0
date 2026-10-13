@@ -1,12 +1,12 @@
 #include "BaseHorizontalEdgeCell.h"
 
 BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter) :
-    BaseEdgeCell(5, 2, edgeChar), _HALF_WIDTH{WIDTH / 2}, _MARKED_LETTER{markedLetter}
+    BaseEdgeCell(edgeChar), _MARKED_LETTER{markedLetter}
 {
 }
 
 BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor) :
-    BaseEdgeCell(5, 2, edgeChar), _HALF_WIDTH{WIDTH / 2}, _MARKED_LETTER{markedLetter}
+    BaseEdgeCell(edgeChar, cellColor), _MARKED_LETTER{markedLetter}
 {
 }
 
