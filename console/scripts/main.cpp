@@ -1,14 +1,16 @@
 //DON'T EDIT
 #include <io.h>
 #include <fcntl.h>
+#include <stdexcept>
 
 #include "GameManagement.h"
 
 int main()
 {
-	_setmode(_fileno(stdout), _O_U16TEXT);
+	if (_setmode(_fileno(stdout), _O_U16TEXT) == -1)
+        throw std::runtime_error("_O_U16TEXT mode didn't set.");
 
-    GameManagement gameManagement;
+    GameManagement& gameManagement = GameManagement::GetGameManagement();
     gameManagement.Update();
     return 0;
 }

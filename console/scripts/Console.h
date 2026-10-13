@@ -1,8 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <windows.h>
 
-class ColorChanger
+#undef RGB
+
+class Console
 {
 public:
     struct Color;
@@ -16,6 +19,8 @@ public:
     private:
         friend struct Color;
         RGB(int r, int g, int b);
+        RGB(const RGB& other);
+        RGB(RGB&& other);
     };
     
     struct Color final
@@ -39,9 +44,17 @@ public:
         virtual ~Color() = 0;
     };
 
+private:
+    static inline const HANDLE _OUTPUT_HANDLE = GetStdHandle(STD_OUTPUT_HANDLE);
+public:
+    virtual ~Console() = 0;
+
     static void SetTextColor(const RGB* Color);
     static void SetBGColor(const RGB* Color);
-
     static void ResetConsoleColor();
+
+    static void ResetCaret();
+    static void RefreshConsole();
+    static bool IsThisFitInConsole(int rowCnt, int colCnt);
 };
 

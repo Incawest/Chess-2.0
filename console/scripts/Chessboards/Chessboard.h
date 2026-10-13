@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Cell.h"
+#include "Console.h"
 #include "IUpdatable.h"
 
 class Chessboard : public IUpdatable

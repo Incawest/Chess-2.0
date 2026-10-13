@@ -9,28 +9,47 @@ GameManagement::~GameManagement()
 	delete _chessboard;
 }
 
+GameManagement& GameManagement::GetGameManagement()
+{
+	static GameManagement gameManagement;
+	return gameManagement;	
+}
+
+void GameManagement::SetGUIConfines(int rowCnt, int colCnt)
+{
+	_minRowCnt = rowCnt;
+	_minColCnt = colCnt + 1;
+}
+
 void GameManagement::Update()
 {
 	while (_isGameRunning)
 	{
-	   ClearConsole();
-	   _chessboard->Update();
-	   std::this_thread::sleep_for(std::chrono::milliseconds(_FRAME_DELAY_MIL_SEC));
+		Console::ResetCaret();
+		if (Console::IsThisFitInConsole(_minRowCnt, _minColCnt))
+		{
+			_chessboard->Update();
+		}
+		else
+			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
 
+		std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
 		PickUpInput();
 	}
-}
-
-void GameManagement::ClearConsole()
-{
-	std::wcout << "\033[3J\033[1;1H" << std::flush;
 }
 
 void GameManagement::PickUpInput()
 {
 	if (_kbhit())
 	{
-		if (_getch() == 27)
+		int inputCode = _getch();
+		if (inputCode == 27)
 			_isGameRunning = false;
+		else if (inputCode == 0 || inputCode == 224)
+		{
+			inputCode = _getch();
+			if(inputCode == 98)
+				Console::RefreshConsole();
+		}
 	}
 }
