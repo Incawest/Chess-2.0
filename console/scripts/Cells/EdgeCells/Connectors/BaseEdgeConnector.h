@@ -6,9 +6,10 @@
 class BaseEdgeConnector : public BaseEdgeCell<CellsConfiguration::SPACE_BETWEEN_CELLS, CellsConfiguration::HORIZONTAL_EDGE_HEIGHT>
 {
 protected:
-    const std::function<void()> _DRAW_EMPTY_LINE_BEYOND_CHESSBOARD = [this]() { 
+    const std::function<void()> _DRAW_EMPTY_LINE_BEYOND_CHESSBOARD_FUNC = [this]() { 
         this->DrawEmptyLine(this->WIDTH);
     };
 public:
-    using BaseEdgeCell::BaseEdgeCell;
+    BaseEdgeConnector(wchar_t edgeChar);
+    BaseEdgeConnector(wchar_t edgeChar, const RGB* cellColor);
 };

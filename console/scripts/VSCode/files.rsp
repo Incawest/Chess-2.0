@@ -23,6 +23,7 @@
 "-I"
 "D:/Links/chess-2.0/console/scripts/VSCode"
 "D:/Links/chess-2.0/console/scripts/Cells/BoardCells/BaseBoardCell.cpp"
+"D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/Connectors/BaseEdgeConnector.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/Connectors/BottomEdgeConnector.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/Connectors/TopEdgeConnector.cpp"
 "D:/Links/chess-2.0/console/scripts/Cells/EdgeCells/CornerEdgeCells/BottomLeftCornerEdgeCell.cpp"

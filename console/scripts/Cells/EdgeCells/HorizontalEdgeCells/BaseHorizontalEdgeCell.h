@@ -21,6 +21,5 @@ public:
     BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter);
     BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor);
 protected:
-    virtual void DrawEdge() const override;
     void DrawMarkedLetter() const;
 };

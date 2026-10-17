@@ -19,7 +19,7 @@ RightVerticalEdgeCell::RightVerticalEdgeCell(wchar_t edgeChar, int markedDigit, 
 
 void RightVerticalEdgeCell::DrawCell(int line) const
 {
-    DrawEdge();
+    DrawEdge(_DRAW_EDGE_CHARS_FUNC);
     if (line == _MID_HEIGHT)
         DrawLineBeyondChessboard(_DRAW_LINE_BEYOND_CHESSBOARD_FUNC);
     else

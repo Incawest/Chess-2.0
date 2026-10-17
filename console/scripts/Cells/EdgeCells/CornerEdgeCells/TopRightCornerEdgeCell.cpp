@@ -4,7 +4,7 @@ void TopRightCornerEdgeCell::DrawCell(int line) const
 {
     if (line == _LAST_LINE)
     {
-        DrawEdge();
+        DrawEdge(_DRAW_EDGE_CHARS_FUNC);
         DrawLineBeyondChessboard(_DRAW_EMPTY_LINE_BEYOND_CHESSBOARD_FUNC);
     }
     else
