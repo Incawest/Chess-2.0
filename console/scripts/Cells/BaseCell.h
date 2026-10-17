@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+#include <iostream>
+
 #include "Console.h"
 
 template<int width, int height>
@@ -10,7 +13,7 @@ public:
     static inline constexpr int WIDTH = width;
     static inline constexpr int HEIGHT = height;
 protected:
-    const Console::RGB* _cellColor = nullptr;
+    const Console::RGB* _cellColor;
     
 public:
     BaseCell() = default;
@@ -31,8 +34,16 @@ public:
 protected:
     void DrawEmptyLine(int length) const
     {
-        if (length == 0)
-            return;
-        std::wcout << std::wstring(length, L' ');
+        for (std::size_t i = 0; i < length; ++i)
+            std::wcout << L' ';
+    }
+
+    void DrawLineBeyondChessboard(const std::function<void()>& drawLineFunction) const
+    {
+        const Console::RGB* pastBgColor = Console::GetBGColor();
+        Console::ResetBGColor();
+        if(drawLineFunction != nullptr)
+            drawLineFunction();
+        Console::SetBGColor(pastBgColor);
     }
 };

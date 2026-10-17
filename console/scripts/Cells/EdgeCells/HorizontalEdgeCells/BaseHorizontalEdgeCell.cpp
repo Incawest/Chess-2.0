@@ -1,7 +1,7 @@
 #include "BaseHorizontalEdgeCell.h"
 
 BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter) :
-    BaseEdgeCell(edgeChar), _MARKED_LETTER{markedLetter}
+    BaseHorizontalEdgeCell(edgeChar, markedLetter, nullptr)
 {
 }
 
@@ -10,9 +10,18 @@ BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedL
 {
 }
 
+void BaseHorizontalEdgeCell::DrawEdge() const
+{
+    auto pastTextColor = Console::GetTextColor();
+    Console::SetTextColor(_cellColor);
+    std::wcout << std::wstring(WIDTH, _EDGE_CHAR);
+    Console::SetTextColor(pastTextColor);
+}
+
 void BaseHorizontalEdgeCell::DrawMarkedLetter() const
 {
-    auto pastTextColor = SetConsoleTextColorAsCellColor();
+    auto pastTextColor = Console::GetTextColor();
+    Console::SetTextColor(_cellColor);
     std::wcout << _MARKED_LETTER;
-    SetConsoleTextColorAsAnotherColor(pastTextColor);
+    Console::SetTextColor(pastTextColor);
 }

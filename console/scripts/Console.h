@@ -45,8 +45,8 @@ public:
     };
 
 private:
-    static inline const RGB* _textColor = &Color::WHITE;
-    static inline const RGB* _bgColor = &Color::BLACK; 
+    static inline const RGB* _textColor = nullptr;
+    static inline const RGB* _bgColor = nullptr;
     static inline const HANDLE _OUTPUT_HANDLE = GetStdHandle(STD_OUTPUT_HANDLE);
 public:
     virtual ~Console() = 0;
@@ -55,6 +55,8 @@ public:
     static const RGB* GetBGColor();
     static void SetTextColor(const RGB* Color);
     static void SetBGColor(const RGB* Color);
+    static void ResetTextColor();
+    static void ResetBGColor();
     static void ResetConsoleColor();
 
     static void ResetCaret();

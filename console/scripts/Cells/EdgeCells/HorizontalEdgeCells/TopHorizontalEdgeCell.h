@@ -9,7 +9,6 @@ private:
     static inline constexpr const int _NEXT_TO_LAST_LINE = _LAST_LINE - 1;
 
 public:
-    TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter);
-    TopHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor);
+    using BaseHorizontalEdgeCell::BaseHorizontalEdgeCell;
     void DrawCell(int line) const override;
 };

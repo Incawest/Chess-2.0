@@ -21,7 +21,7 @@ const Console::RGB* Console::GetBGColor()
     return _bgColor;
 }
 
-void Console::SetTextColor(const RGB* color)
+void Console::SetTextColor(const Console::RGB* color)
 {
     if (color != nullptr)
     {
@@ -47,11 +47,21 @@ void Console::SetBGColor(const RGB* color)
     }
 }
 
+void Console::ResetTextColor()
+{
+    std::wcout << L"\033[39m" << std::flush;
+}
+
+void Console::ResetBGColor()
+{
+    std::wcout << L"\033[49m" << std::flush;
+}
+
 void Console::ResetConsoleColor()
 {
-    std::wcout << L"\x1b[0m";
-    _textColor = &Color::BLACK;
-    _bgColor = &Color::WHITE;
+    std::wcout << L"\x1b[0m" << std::flush;
+    _textColor = &Color::WHITE;
+    _bgColor = &Color::BLACK;
 }
 
 void Console::ResetCaret()

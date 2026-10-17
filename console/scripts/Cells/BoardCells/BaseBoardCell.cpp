@@ -40,25 +40,21 @@ void BaseBoardCell::SetPieceOnCell(
 
 void BaseBoardCell::DrawCell(int line) const
 {
-    const RGB* pastTextColor = nullptr;
-    if (_cellColor != nullptr)
-    {
-        pastTextColor = Console::GetTextColor();
-        Console::SetTextColor(_cellColor);
-    }
+    const RGB* pastTextColor = Console::GetTextColor();
+    Console::SetTextColor(_cellColor);
 
     if (line == 0)
     {
         std::wcout << CellboardParts::TOP_LEFT_CORNER;
         std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
-        std::wcout << CellboardParts::TOP_RIGHT_CORNER << L' ';
+        std::wcout << CellboardParts::TOP_RIGHT_CORNER;
     }
     
     else if (line == _LAST_LINE)
     {
         std::wcout << CellboardParts::BOTTOM_LEFT_CORNER;
         std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
-        std::wcout << CellboardParts::BOTTOM_RIGHT_CORNER << L' ';
+        std::wcout << CellboardParts::BOTTOM_RIGHT_CORNER;
     }
     else
     {
@@ -73,9 +69,8 @@ void BaseBoardCell::DrawCell(int line) const
         else
             DrawEmptyLine(_HORIZONTAL_WIDTH);
 
-        std::wcout << CellboardParts::VERTICAL_BORDER << L' ';
+        std::wcout << CellboardParts::VERTICAL_BORDER;
     }
 
-    if (_cellColor != nullptr)
-        Console::SetTextColor(pastTextColor);
+    Console::SetTextColor(pastTextColor);
 }

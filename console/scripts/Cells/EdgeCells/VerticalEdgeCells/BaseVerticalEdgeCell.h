@@ -1,18 +1,20 @@
 #pragma once
 
 #include "BaseEdgeCell.h"
+#include "CellsConfiguration.h"
 
-class BaseVerticalEdgeCell : public BaseEdgeCell<2, 3>
+class BaseVerticalEdgeCell : public BaseEdgeCell<CellsConfiguration::VERTICAL_EDGE_WIDTH, CellsConfiguration::BASE_HEIGHT>
 {
 protected:
     static inline constexpr int _LAST_COL = WIDTH - 1;
     static inline constexpr int _NEXT_TO_LAST_COL = _LAST_COL - 1;
     static inline constexpr int _MID_HEIGHT = HEIGHT / 2;
-    const wchar_t _MARKED_DIGIT;
-
+    const int _MARKED_DIGIT;
+    const std::function<void()> _DRAW_EMPTY_LINE_BEYOND_CHESSBOARD_FUNC = [this](){
+        this->DrawEmptyLine(this->_LAST_COL);
+    };
+    const std::function<void()> _DRAW_LINE_BEYOND_CHESSBOARD_FUNC;
 public:
-    BaseVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit);
-    BaseVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit, const RGB* cellColor);
-protected:
-    virtual void DrawMarkedDigitAndEdge() const = 0;
+    BaseVerticalEdgeCell(std::function<void()> drawLineBeyondChessboardFunc, wchar_t edgeChar, int markedDigit);
+    BaseVerticalEdgeCell(std::function<void()> drawLineBeyondChessboardFunc, wchar_t edgeChar, int markedDigit, const RGB* cellColor);
 };

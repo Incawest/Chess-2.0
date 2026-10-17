@@ -1,7 +1,7 @@
 #include "GameManagement.h"
 GameManagement::GameManagement()
 {
-	_chessboard = new Chessboard(8);
+	_chessboard = new BaseChessboard(8);
 }
 
 GameManagement::~GameManagement()

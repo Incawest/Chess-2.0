@@ -5,9 +5,7 @@
 class LeftVerticalEdgeCell : public BaseVerticalEdgeCell
 {
 public:
-    LeftVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit);
-    LeftVerticalEdgeCell(wchar_t edgeChar, wchar_t markedDigit, const RGB* cellColor);
+    LeftVerticalEdgeCell(wchar_t edgeChar, int markedDigit);
+    LeftVerticalEdgeCell(wchar_t edgeChar, int markedDigit, const RGB* cellColor);
     void DrawCell(int line) const override;
-protected:
-    virtual void DrawMarkedDigitAndEdge() const override;
 };

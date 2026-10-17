@@ -5,7 +5,7 @@
 #include <thread>
 
 #include "IUpdatable.h"
-#include "Chessboard.h"
+#include "BaseChessboard.h"
 #include "Console.h"
 
 class GameManagement : public IUpdatable
@@ -17,7 +17,7 @@ private:
     static inline int _minColCnt = 52;
 
     //DEBUG
-    Chessboard* _chessboard;
+    BaseChessboard* _chessboard;
 public:
     GameManagement(const GameManagement& other) = delete;
     static GameManagement& GetGameManagement();

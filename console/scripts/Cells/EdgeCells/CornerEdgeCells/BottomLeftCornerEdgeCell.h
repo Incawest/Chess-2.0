@@ -5,7 +5,6 @@
 class BottomLeftCornerEdgeCell : public BaseCornerEdgeCell
 {
 public:
-    BottomLeftCornerEdgeCell(wchar_t edgeChar);
-    BottomLeftCornerEdgeCell(wchar_t edgeChar, const RGB* cellColor);
+    using BaseCornerEdgeCell::BaseCornerEdgeCell;
     void DrawCell(int line) const override;
 };

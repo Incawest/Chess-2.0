@@ -17,35 +17,18 @@ protected:
     const wchar_t _EDGE_CHAR;
 
 public:
-    BaseEdgeCell(wchar_t edgeChar) : _EDGE_CHAR(edgeChar)
+    BaseEdgeCell(wchar_t edgeChar) : BaseEdgeCell(edgeChar, nullptr)
     {
     }
     BaseEdgeCell(wchar_t edgeChar, const RGB* cellColor) : BaseCell<width, height>(cellColor), _EDGE_CHAR{edgeChar}
     {
     }
 protected:
-    const RGB* SetConsoleTextColorAsCellColor() const
+    virtual void DrawEdge() const
     {
-        if (this->_cellColor != nullptr)
-        {
-            const RGB* pastTextColor = Console::GetTextColor();
-            Console::SetTextColor(this->_cellColor);
-            return pastTextColor;
-        }
-        else
-            return nullptr;
-    }
-
-    void SetConsoleTextColorAsAnotherColor(const RGB* anotherColor) const
-    {
-        if (anotherColor != nullptr)
-            Console::SetTextColor(anotherColor);
-    }
-
-    void DrawEdge() const
-    {
-        auto pastTextColor = SetConsoleTextColorAsCellColor();
+        auto pastTextColor = Console::GetTextColor();
+        Console::SetTextColor(this->_cellColor);
         std::wcout << _EDGE_CHAR;
-        SetConsoleTextColorAsAnotherColor(pastTextColor);
+        Console::SetTextColor(pastTextColor);
     }
 };
