@@ -1,18 +1,18 @@
 #include "LeftVerticalEdgeCell.h"
 
 LeftVerticalEdgeCell::LeftVerticalEdgeCell(wchar_t edgeChar, int markedDigit) :
-    LeftVerticalEdgeCell(edgeChar, markedDigit, nullptr)
+    LeftVerticalEdgeCell{edgeChar, markedDigit, nullptr}
 {
 }
 
 LeftVerticalEdgeCell::LeftVerticalEdgeCell(wchar_t edgeChar, int markedDigit, const RGB* cellColor) :
-    BaseVerticalEdgeCell([this](){
+    BaseVerticalEdgeCell{[this](){
         auto pastTextColor = Console::GetTextColor();
         Console::SetTextColor(_cellColor);
         std::wcout << _MARKED_DIGIT;
         Console::SetTextColor(pastTextColor);
         DrawEmptyLine(_NEXT_TO_LAST_COL);
-    },edgeChar, markedDigit, cellColor)
+    },edgeChar, markedDigit, cellColor}
 {
 }
 

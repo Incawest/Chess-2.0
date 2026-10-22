@@ -1,15 +1,15 @@
 #include "BaseHorizontalEdgeCell.h"
 
 BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter) :
-    BaseHorizontalEdgeCell(edgeChar, markedLetter, nullptr)
+    BaseHorizontalEdgeCell{edgeChar, markedLetter, nullptr}
 {
 }
 
 BaseHorizontalEdgeCell::BaseHorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor) :
-    BaseEdgeCell([this](){
+    BaseEdgeCell{[this](){
         for (std::size_t i = 0; i < WIDTH; ++i)
             std::wcout << _EDGE_CHAR;
-    }, edgeChar, cellColor), _MARKED_LETTER{markedLetter}
+    }, edgeChar, cellColor}, _MARKED_LETTER{markedLetter}
 {
 }
 

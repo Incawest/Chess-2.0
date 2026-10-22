@@ -9,6 +9,8 @@
 
 #include "AllEdgeCells.h"
 #include "BaseBoardCell.h"
+#include "CellsConfiguration.h"
+#include "ChessPiece.h"
 #include "Console.h"
 #include "IUpdatable.h"
 
@@ -40,27 +42,29 @@ private:
         std::vector<std::unique_ptr<BottomEdgeConnector>> bottomEdgeConnectors;
     };
     
+    const std::size_t _CHESSBOARD_SIZE;
 	bool _isActive;
 	std::vector<std::unique_ptr<BaseBoardCell>> _cells;
     ChessboardEdges _edges;
-	std::size_t _chessBoardSize;
 
 public:
 	BaseChessboard(std::size_t chessBoardSize, bool isActive = true);
     virtual ~BaseChessboard();
 
+    std::size_t GetChessboardSize();
+    void SetPieceOnCell(std::weak_ptr<ChessPiece> chessPiece, int col, int row);
+
 	void Update() override;
 
-private: 
-
+private:
 	void BuildChessboard();
 
+    void DrawEmptyLine(std::size_t length) const;
     template <std::derived_from<BaseHorizontalEdgeCell> HorizontalEdgeCell, std::derived_from<BaseEdgeConnector> EdgeConnector>
     void DrawEdge(const BaseCornerEdgeCell* leftCorner, 
         const std::vector<std::unique_ptr<HorizontalEdgeCell>>& edge, 
         const BaseCornerEdgeCell* rightCorner,
         const std::vector<std::unique_ptr<EdgeConnector>>& connectors) const;
-    
 	void DrawChessboard() const;
 };
 
@@ -73,12 +77,12 @@ void BaseChessboard::DrawEdge(const BaseCornerEdgeCell* leftCorner,
     for (std::size_t line = 0; line < BaseCornerEdgeCell::HEIGHT; ++line)
     {
         leftCorner->DrawCell(line);
-        for (std::size_t cellInLine = 0; cellInLine < _chessBoardSize; ++cellInLine)
+        for (std::size_t cellInLine = 0; cellInLine < _CHESSBOARD_SIZE; ++cellInLine)
         {
             connectors[cellInLine]->DrawCell(line);
             edge[cellInLine]->DrawCell(line);
         }
-        connectors[_chessBoardSize]->DrawCell(line);
+        connectors[_CHESSBOARD_SIZE]->DrawCell(line);
         rightCorner->DrawCell(line);
         std::wcout << std::endl;
     }

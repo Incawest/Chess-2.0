@@ -6,6 +6,6 @@ class Pawn : public ChessPiece
 {
 public:
     Pawn(bool isWhite) 
-    : ChessPiece(isWhite, L'P')
+    : ChessPiece{isWhite, L'P'}
     {}
 };

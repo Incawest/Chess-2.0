@@ -1,7 +1,7 @@
 #include "GameManagement.h"
 GameManagement::GameManagement()
 {
-	_chessboard = new BaseChessboard(8);
+	_chessboard = new BaseChessboard{8};
 }
 
 GameManagement::~GameManagement()
@@ -33,7 +33,7 @@ void GameManagement::Update()
 		else
 			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
 
-		std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
+		//std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
 		PickUpInput();
 	}
 }
@@ -50,6 +50,8 @@ void GameManagement::PickUpInput()
 			inputCode = _getch();
 			if(inputCode == 98)
 				Console::RefreshConsole();
+			else if(inputCode == 75);
+			else if(inputCode == 77);
 		}
 	}
 }

@@ -6,6 +6,6 @@ class Rook : public ChessPiece
 {
 public:
     Rook(bool isWhite)
-    : ChessPiece(isWhite, L'R')
+    : ChessPiece{isWhite, L'R'}
     {}
 };

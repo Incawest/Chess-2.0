@@ -2,7 +2,7 @@
 
 #include <conio.h>
 #include <iostream>
-#include <thread>
+//#include <thread>
 
 #include "IUpdatable.h"
 #include "BaseChessboard.h"
@@ -11,7 +11,7 @@
 class GameManagement : public IUpdatable
 {
 private:
-    static inline const auto _FRAME_DELAY_MIL_SEC = std::chrono::milliseconds(100);
+    //static inline const auto _FRAME_DELAY_MIL_SEC = std::chrono::milliseconds(100);
     bool _isGameRunning = true;
     static inline int _minRowCnt = 26;
     static inline int _minColCnt = 52;
@@ -20,9 +20,11 @@ private:
     BaseChessboard* _chessboard;
 public:
     GameManagement(const GameManagement& other) = delete;
-    static GameManagement& GetGameManagement();
 
+    static GameManagement& GetGameManagement();
     static void SetGUIConfines(int rowCnt, int colCnt);
+
+    void StartGame();
 	void Update() override;
 
 private:
