@@ -5,7 +5,9 @@ Console::RGB::RGB(int r, int g, int b) : r{r}, g{g}, b{b}
 }
 
 Console::RGB::RGB(const RGB& other) = default;
-Console::RGB::RGB(RGB&& other) = default;
+Console::RGB::RGB(RGB&& other) noexcept = default;
+Console::RGB& Console::RGB::operator=(const RGB& other) = default;
+Console::RGB& Console::RGB::operator=(RGB&& other) noexcept = default;
 
 Console::Color::~Color() = default;
 

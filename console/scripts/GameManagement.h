@@ -20,6 +20,7 @@ private:
     BaseChessboard* _chessboard;
 public:
     GameManagement(const GameManagement& other) = delete;
+    GameManagement& operator=(const GameManagement& other) = delete;
 
     static GameManagement& GetGameManagement();
     static void SetGUIConfines(int rowCnt, int colCnt);

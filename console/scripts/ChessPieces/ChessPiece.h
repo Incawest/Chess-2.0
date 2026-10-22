@@ -25,9 +25,9 @@ public:
 
     virtual ~ChessPiece() = 0;
     
-    wchar_t GetCharacter() const;
-    bool GetIsWhite() const;
-    const RGB* GetColor() const;
-    void SetPosition(int col, int row);
+    wchar_t GetCharacter() const noexcept;
+    bool GetIsWhite() const noexcept;
+    const RGB* GetColor() const noexcept;
+    void SetPosition(int col, int row) noexcept;
     void DrawPiece() const;
 };

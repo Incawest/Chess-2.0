@@ -20,7 +20,9 @@ public:
         friend struct Color;
         RGB(int r, int g, int b);
         RGB(const RGB& other);
-        RGB(RGB&& other);
+        RGB(RGB&& other) noexcept;
+        RGB& operator=(const RGB& other);
+        RGB& operator=(RGB&& other) noexcept;
     };
     
     struct Color final

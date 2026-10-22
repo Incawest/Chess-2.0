@@ -46,14 +46,14 @@ void BaseBoardCell::DrawCell(int line) const
     if (line == 0)
     {
         std::wcout << CellboardParts::TOP_LEFT_CORNER;
-        std::wcout << std::wstring{_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER};
+        std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
         std::wcout << CellboardParts::TOP_RIGHT_CORNER;
     }
     
     else if (line == _LAST_LINE)
     {
         std::wcout << CellboardParts::BOTTOM_LEFT_CORNER;
-        std::wcout << std::wstring{_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER};
+        std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
         std::wcout << CellboardParts::BOTTOM_RIGHT_CORNER;
     }
     else

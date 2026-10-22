@@ -17,22 +17,22 @@ ChessPiece::ChessPiece(
 
 ChessPiece::~ChessPiece() = default;
 
-wchar_t ChessPiece::GetCharacter() const
+wchar_t ChessPiece::GetCharacter() const noexcept
 {
     return _character;
 }
 
-bool ChessPiece::GetIsWhite() const
+bool ChessPiece::GetIsWhite() const noexcept
 {
     return _isWhite;
 }
 
-const RGB* ChessPiece::GetColor() const
+const RGB* ChessPiece::GetColor() const noexcept
 {
     return _figureColor;
 }
 
-void ChessPiece::SetPosition(int col, int row)
+void ChessPiece::SetPosition(int col, int row) noexcept
 {
     _positionCol = col;
     _positionRow = row;
