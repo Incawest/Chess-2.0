@@ -24,8 +24,35 @@ if (pawn is not null)
 Console.WriteLine($"Rook is Pawn = {pieces[1] is Pawn}");
 
 GameManagement gameManagement = new GameManagement(8, 5);
-foreach (BaseChessPiece piece in pieces)
-    gameManagement.MainChessboard.AddChessPiece(piece);
+Console.WriteLine("-------RULES-------");
+try
+{
+    foreach (BaseChessPiece piece in pieces)
+        gameManagement.MainChessboard.AddChessPiece(piece);
+    Console.WriteLine("Added Pawn and Rook");
+}
+catch (ChessRuleException error)
+{
+    Console.WriteLine("Rule: " + error.Message);
+}
+Rook extraRook = new Rook();
+try
+{
+    gameManagement.MainChessboard.AddChessPiece(extraRook);
+}
+catch (ChessRuleException error)
+{
+    Console.WriteLine("Rule: " + error.Message);
+}
+try
+{
+    gameManagement.MainChessboard.RemoveChessPiece(extraRook);
+}
+catch (ChessRuleException error)
+{
+    Console.WriteLine("Rule: " + error.Message);
+}
+Console.WriteLine($"White pieces after refusal = {gameManagement.MainChessboard.WhiteChessPieces.Count}");
 
 Console.WriteLine("-------FORMATTER-------");
 gameManagement.SetPieceFormatter(new ShortPieceFormatter());

@@ -25,6 +25,8 @@ public class Chessboard
 
     public Chessboard(int edgeLength, int maxChessPiecesValue)
     {
+        if (edgeLength <= 0 || maxChessPiecesValue < 0)
+            throw new ArgumentException("Invalid chessboard dimensions or piece value limit.");
         _edgeLength = edgeLength;
         _maxChessPiecesValue = maxChessPiecesValue;
 
@@ -32,59 +34,49 @@ public class Chessboard
     }
     public void AddChessPiece(BaseChessPiece newChessPiece)
     {
-        ref int curChessPiecesValue = ref (newChessPiece.IsWhitePiece? ref _whiteChessPiecesValue : ref _blackChessPiecesValue);
-
-        if (curChessPiecesValue + newChessPiece.ChessPieceValue > _maxChessPiecesValue)
-        {
-            Console.WriteLine(newChessPiece.CharChessPiece + " piece is superfluous, IsWhitePeace = " + newChessPiece.IsWhitePiece);
-            return;
-        }
-
-        curChessPiecesValue += newChessPiece.ChessPieceValue;
-
-        int pieceIndex;
+        if (newChessPiece is null)
+            throw new ArgumentNullException(nameof(newChessPiece));
+        ref int curChessPiecesValue = ref (newChessPiece.IsWhitePiece ? ref _whiteChessPiecesValue : ref _blackChessPiecesValue);
         List<BaseChessPiece> curChessPieces = newChessPiece.IsWhitePiece ? WhiteChessPieces : BlackChessPieces;
 
-        if (newChessPiece.IsWhitePiece)
-            pieceIndex = curChessPieces.Count == 0 ? 0 : curChessPieces[curChessPieces.Count - 1].IndexInChessboard + 1;
-        else
-            pieceIndex = curChessPieces.Count == 0 ? _charChessboard.Count - 1 : curChessPieces[curChessPieces.Count - 1].IndexInChessboard - 1;
+        if (curChessPieces.Any(piece => ReferenceEquals(piece, newChessPiece)))
+            throw new ChessRuleException("The piece is already on the chessboard.");
+        if (newChessPiece.ChessPieceValue > _maxChessPiecesValue - curChessPiecesValue)
+            throw new ChessRuleException("The piece value limit is exceeded.");
 
-        if (pieceIndex < 0 || pieceIndex > _charChessboard.Count || _charChessboard[pieceIndex] != ' ')
-        {
-            Console.WriteLine(newChessPiece.CharChessPiece + " piece is superfluous, _isWhitePeace = " + newChessPiece.IsWhitePiece);
-            return;
-        }
+        int pieceIndex = newChessPiece.IsWhitePiece ? 0 : _charChessboard.Count - 1;
+        if (curChessPieces.Count != 0)
+            pieceIndex = curChessPieces[curChessPieces.Count - 1].IndexInChessboard + (newChessPiece.IsWhitePiece ? 1 : -1);
+        if (pieceIndex < 0 || pieceIndex >= _charChessboard.Count || _charChessboard[pieceIndex] != ' ')
+            throw new ChessRuleException("There is no free cell for the piece.");
 
         newChessPiece.IndexInChessboard = pieceIndex;
         curChessPieces.Add(newChessPiece);
+        curChessPiecesValue += newChessPiece.ChessPieceValue;
         _charChessboard[pieceIndex] = newChessPiece.CharChessPiece;
     }
     public void RemoveChessPiece(BaseChessPiece removingChessPiece)
     {
+        if (removingChessPiece is null)
+            throw new ArgumentNullException(nameof(removingChessPiece));
         List<BaseChessPiece> curChessPieces = removingChessPiece.IsWhitePiece ? WhiteChessPieces : BlackChessPieces;
-        
-        int rmChessPieceIndex = curChessPieces.FindIndex(chessPiece => chessPiece == removingChessPiece);
-
+        int rmChessPieceIndex = curChessPieces.FindIndex(piece => ReferenceEquals(piece, removingChessPiece));
         if (rmChessPieceIndex == -1)
+            throw new ChessRuleException("The piece is not on the chessboard.");
+
+        int index = removingChessPiece.IndexInChessboard;
+        for (int i = rmChessPieceIndex + 1; i < curChessPieces.Count; ++i)
         {
-            Console.WriteLine("That piece doesn't exist on the chessboard");
-            return;
+            BaseChessPiece piece = curChessPieces[i];
+            _charChessboard[index] = piece.CharChessPiece;
+            piece.IndexInChessboard = index;
+            index += removingChessPiece.IsWhitePiece ? 1 : -1;
         }
-
-        int i = removingChessPiece.IndexInChessboard;
-
-        if (removingChessPiece.IsWhitePiece)
-        {
-            for (int index = rmChessPieceIndex + 1; index < curChessPieces.Count; ++i, ++index)
-                _charChessboard[i] = _charChessboard[i + 1];
-        }
-        else
-            for (int index = rmChessPieceIndex + 1 + 1; index < curChessPieces.Count; --i, ++index)
-                _charChessboard[i] = _charChessboard[i - 1];
-        _charChessboard[i] = ' ';
-
+        _charChessboard[index] = ' ';
         curChessPieces.RemoveAt(rmChessPieceIndex);
+        ref int curChessPiecesValue = ref (removingChessPiece.IsWhitePiece ? ref _whiteChessPiecesValue : ref _blackChessPiecesValue);
+        curChessPiecesValue -= removingChessPiece.ChessPieceValue;
+        removingChessPiece.IndexInChessboard = -1;
     }
     public void Update()
     {
