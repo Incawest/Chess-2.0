@@ -32,7 +32,7 @@ private:
 
 public:
     Chessboard(int edgeLength, int maxChessPiecesValue);
-    ~Chessboard();
+    ~Chessboard() noexcept;
     std::vector<std::weak_ptr<BaseChessPiece>> GetWhiteChessPieces() const;
     std::vector<std::weak_ptr<BaseChessPiece>> GetBlackChessPieces() const;
     void AddChessPiece(const std::weak_ptr<BaseChessPiece>& weakNewChessPiece);

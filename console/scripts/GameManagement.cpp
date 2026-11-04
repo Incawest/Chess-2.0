@@ -6,7 +6,7 @@ GameManagement::GameManagement(int edgeLength, int maxChessPiecesValue)
     std::wcout << L"GameManagement was created" << std::endl;
 }
 
-GameManagement::~GameManagement()
+GameManagement::~GameManagement() noexcept
 {
 	std::wcout << L"GameManagement was destroyed" << std::endl;
 }

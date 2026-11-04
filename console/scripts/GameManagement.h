@@ -14,7 +14,7 @@ private:
     bool _isGameRunning = true;
 public:
     GameManagement(int edgeLength, int chessPiecesValue);
-    ~GameManagement();
+    ~GameManagement() noexcept;
     void Update();
     Chessboard& GetChessboard() const;
 private:

@@ -28,7 +28,7 @@ BaseChessPiece::BaseChessPiece(BaseChessPiece&& other) noexcept :
     std::wcout << L"BaseChessPiece was moved" << std::endl;
 }
 
-BaseChessPiece::~BaseChessPiece()
+BaseChessPiece::~BaseChessPiece() noexcept
 {
     std::wcout << L"BaseChessPiece was destroyed" << std::endl;
 }
@@ -83,6 +83,11 @@ bool BaseChessPiece::GetIsWhitePiece() const
 const std::string& BaseChessPiece::GetName() const
 {
     return _name;
+}
+
+std::string BaseChessPiece::GetClassName() const
+{
+    return "BaseChessPiece";
 }
 
 void BaseChessPiece::SetIndexInChessboard(int newIndexInChessboard)

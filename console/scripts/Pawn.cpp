@@ -21,9 +21,14 @@ Pawn::Pawn(Pawn&& other) noexcept : BaseChessPiece(std::move(other))
     std::wcout << L"Pawn was moved" << std::endl;
 }
 
-Pawn::~Pawn()
+Pawn::~Pawn() noexcept
 {
     std::wcout << L"Pawn was destroyed" << std::endl;
+}
+
+std::string Pawn::GetClassName() const
+{
+    return "Pawn";
 }
 
 std::string Pawn::Describe() const

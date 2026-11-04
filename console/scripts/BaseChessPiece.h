@@ -19,7 +19,7 @@ protected:
     BaseChessPiece(const BaseChessPiece& other);
     BaseChessPiece(BaseChessPiece&& other) noexcept;
 public:
-    virtual ~BaseChessPiece();
+    virtual ~BaseChessPiece() noexcept;
     BaseChessPiece& operator=(const BaseChessPiece& other);
     BaseChessPiece& operator=(BaseChessPiece&& other) noexcept;
     wchar_t GetWcharChessPiece() const;
@@ -27,6 +27,7 @@ public:
     int GetIndexInChessboard() const;
     bool GetIsWhitePiece() const;
     const std::string& GetName() const;
+    std::string GetClassName() const;
     void SetIndexInChessboard(int newIndexInChessboard);
     static int GetCreatedPiecesCount();
     virtual std::string Describe() const;

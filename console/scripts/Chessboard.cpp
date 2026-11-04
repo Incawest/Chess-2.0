@@ -6,7 +6,7 @@ Chessboard::Chessboard(int edgeLength, int maxChessPiecesValue) : _edgeLength{ed
     std::wcout << L"Chessboard was created" << std::endl;
 }
 
-Chessboard::~Chessboard()
+Chessboard::~Chessboard() noexcept
 {
     std::wcout << L"Chessboard was destroyed" << std::endl;
 }

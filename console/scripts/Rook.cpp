@@ -21,9 +21,14 @@ Rook::Rook(Rook&& other) noexcept : BaseChessPiece(std::move(other))
     std::wcout << L"Rook was moved" << std::endl;
 }
 
-Rook::~Rook()
+Rook::~Rook() noexcept
 {
     std::wcout << L"Rook was destroyed" << std::endl;
+}
+
+std::string Rook::GetClassName() const
+{
+    return "Rook";
 }
 
 std::string Rook::Describe() const

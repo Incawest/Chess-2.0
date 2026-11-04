@@ -1,7 +1,8 @@
 #pragma once
 #include "BaseChessPiece.h"
+#include "IDescribable.h"
 
-class Pawn final : public BaseChessPiece
+class Pawn final : public BaseChessPiece, public IDescribable
 {
 public:
     Pawn();
@@ -10,7 +11,8 @@ public:
     Pawn(Pawn&& other) noexcept;
     Pawn& operator=(const Pawn& other) = default;
     Pawn& operator=(Pawn&& other) noexcept = default;
-    ~Pawn() override;
+    ~Pawn() noexcept override;
+    std::string GetClassName() const;
     std::string Describe() const override;
     std::unique_ptr<BaseChessPiece> Clone() const override;
 };
