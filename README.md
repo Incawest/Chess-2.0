@@ -25,6 +25,8 @@ dotnet build "lab work on c#/ChessApp.csproj" -c Release
 dotnet run --project "lab work on c#/ChessApp.csproj" -c Release --no-build --no-restore
 ```
 
+Часть C++ ЛР5 завершена. ChessRuleException сообщает о превышении ценности набора, отсутствии свободной клетки, повторном добавлении и удалении отсутствующей фигуры. При отказе состояние доски не изменяется.
+
 C++ демонстрирует интерфейс IDescribable, раннее и позднее связывание, dynamic_cast и смену IPieceFormatter в GameManagement. Форматтер возвращает строку, GameManagement выводит её в консоль.
 
 Обе реализации содержат иерархию `BaseChessPiece` → `Pawn`, `Rook` и демонстрации копирования из ЛР4.

@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <vector>
 #include "BaseChessPiece.h"
+#include "ChessRuleException.h"
 
 class Chessboard
 {

@@ -33,10 +33,42 @@ int main()
         std::wcout << L"Derived: " << pawn->GetClassName().c_str() << std::endl;
     std::wcout << L"Rook is Pawn = " << (dynamic_cast<Pawn*>(pieces[1].get()) != nullptr) << std::endl;
 
-    GameManagement gameManagement(8, 10);
+    GameManagement gameManagement(8, 5);
     Chessboard& gameChessboard = gameManagement.GetChessboard();
-    for (const auto& piece : pieces)
-        gameChessboard.AddChessPiece(piece);
+    std::wcout << L"-------RULES-------" << std::endl;
+    try
+    {
+        for (const auto& piece : pieces)
+            gameChessboard.AddChessPiece(piece);
+        std::wcout << L"Added Pawn and Rook" << std::endl;
+    }
+    catch (const ChessRuleException& error)
+    {
+        std::wcout << L"Rule: " << error.what() << std::endl;
+    }
+    catch (const std::exception& error)
+    {
+        std::wcout << L"Adding failed: " << error.what() << std::endl;
+    }
+
+    auto extraRook = std::make_shared<Rook>();
+    try
+    {
+        gameChessboard.AddChessPiece(extraRook);
+    }
+    catch (const ChessRuleException& error)
+    {
+        std::wcout << L"Rule: " << error.what() << std::endl;
+    }
+    try
+    {
+        gameChessboard.RemoveChessPiece(extraRook);
+    }
+    catch (const ChessRuleException& error)
+    {
+        std::wcout << L"Rule: " << error.what() << std::endl;
+    }
+    std::wcout << L"White pieces after refusal = " << gameChessboard.GetWhiteChessPieces().size() << std::endl;
     std::wcout << L"-------FORMATTER-------" << std::endl;
     gameManagement.SetPieceFormatter(std::make_unique<ShortPieceFormatter>());
     std::wcout << L"Short: ";
