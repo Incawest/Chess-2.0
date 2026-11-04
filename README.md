@@ -1,4 +1,6 @@
-# Шахматы 2.0
+# Лабораторная работа 5. Полиморфизм
+
+Тема проекта: игра «Шахматы 2.0».
 
 Ретивых Михаил Сергеевич, группа ПИ-51.
 
@@ -10,7 +12,7 @@
 
 ```powershell
 cd console/scripts
-g++ -std=c++20 main.cpp GameManagement.cpp Chessboard.cpp BaseChessPiece.cpp Pawn.cpp Rook.cpp -o app.exe
+g++ -std=c++20 main.cpp GameManagement.cpp Chessboard.cpp BaseChessPiece.cpp Pawn.cpp Rook.cpp ShortPieceFormatter.cpp DetailedPieceFormatter.cpp -o app.exe
 .\app.exe
 ```
 
@@ -22,5 +24,7 @@ g++ -std=c++20 main.cpp GameManagement.cpp Chessboard.cpp BaseChessPiece.cpp Paw
 dotnet build "lab work on c#/ChessApp.csproj" -c Release
 dotnet run --project "lab work on c#/ChessApp.csproj" -c Release --no-build --no-restore
 ```
+
+C++ демонстрирует интерфейс IDescribable, раннее и позднее связывание, dynamic_cast и смену IPieceFormatter в GameManagement. Форматтер возвращает строку, GameManagement выводит её в консоль.
 
 Обе реализации содержат иерархию `BaseChessPiece` → `Pawn`, `Rook` и демонстрации копирования из ЛР4.

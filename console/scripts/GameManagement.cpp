@@ -1,8 +1,12 @@
 #include "GameManagement.h"
+#include <stdexcept>
+#include <utility>
+#include "DetailedPieceFormatter.h"
 
 GameManagement::GameManagement(int edgeLength, int maxChessPiecesValue)
 {
     _chessboard = std::make_unique<Chessboard>(edgeLength, maxChessPiecesValue);
+    _pieceFormatter = std::make_unique<DetailedPieceFormatter>();
     std::wcout << L"GameManagement was created" << std::endl;
 }
 
@@ -41,4 +45,16 @@ void GameManagement::PickUpInput()
 		if (_getch() == 27)
 			_isGameRunning = false;
 	}
+}
+
+void GameManagement::SetPieceFormatter(std::unique_ptr<IPieceFormatter> formatter)
+{
+    if (!formatter)
+        throw std::invalid_argument("A piece formatter is required.");
+    _pieceFormatter = std::move(formatter);
+}
+
+void GameManagement::PrintPieceInfo(const BaseChessPiece& piece) const
+{
+    std::wcout << _pieceFormatter->Format(piece).c_str() << std::endl;
 }

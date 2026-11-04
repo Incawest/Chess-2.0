@@ -4,6 +4,8 @@
 #include "GameManagement.h"
 #include "Pawn.h"
 #include "Rook.h"
+#include "ShortPieceFormatter.h"
+#include "DetailedPieceFormatter.h"
 
 void PrintDescription(const IDescribable& object)
 {
@@ -35,6 +37,14 @@ int main()
     Chessboard& gameChessboard = gameManagement.GetChessboard();
     for (const auto& piece : pieces)
         gameChessboard.AddChessPiece(piece);
+    std::wcout << L"-------FORMATTER-------" << std::endl;
+    gameManagement.SetPieceFormatter(std::make_unique<ShortPieceFormatter>());
+    std::wcout << L"Short: ";
+    gameManagement.PrintPieceInfo(*pieces[0]);
+    gameManagement.SetPieceFormatter(std::make_unique<DetailedPieceFormatter>());
+    std::wcout << L"Detailed: ";
+    gameManagement.PrintPieceInfo(*pieces[0]);
+
     gameChessboard.Update();
     std::wcout << std::endl;
     return 0;
