@@ -1,4 +1,4 @@
-public sealed class Pawn : BaseChessPiece
+public sealed class Pawn : BaseChessPiece, IDescribable
 {
     public Pawn() : base('P', 1, true, "Pawn")
     {
@@ -14,6 +14,8 @@ public sealed class Pawn : BaseChessPiece
     {
         Console.WriteLine("Pawn was copied");
     }
+
+    public new string GetClassName() => "Pawn";
 
     public override string Describe() => base.Describe() + $", symbol = {_charChessPiece}";
 

@@ -29,4 +29,6 @@ dotnet run --project "lab work on c#/ChessApp.csproj" -c Release --no-build --no
 
 C++ демонстрирует интерфейс IDescribable, раннее и позднее связывание, dynamic_cast и смену IPieceFormatter в GameManagement. Форматтер возвращает строку, GameManagement выводит её в консоль.
 
-Обе реализации содержат иерархию `BaseChessPiece` → `Pawn`, `Rook` и демонстрации копирования из ЛР4.
+Иерархия `BaseChessPiece` → `Pawn`, `Rook` и копирование объектов сохранены из ЛР4.
+
+C# реализует те же интерфейсы и форматтеры; new и override показывают разницу связывания, is и as проверяют тип, IComparable упорядочивает фигуры по имени.

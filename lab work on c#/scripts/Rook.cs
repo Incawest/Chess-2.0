@@ -1,4 +1,4 @@
-public sealed class Rook : BaseChessPiece
+public sealed class Rook : BaseChessPiece, IDescribable
 {
     public Rook() : base('R', 5, true, "Rook")
     {
@@ -14,6 +14,8 @@ public sealed class Rook : BaseChessPiece
     {
         Console.WriteLine("Rook was copied");
     }
+
+    public new string GetClassName() => "Rook";
 
     public override string Describe() => $"Rook: symbol = {_charChessPiece}, index = {IndexInChessboard}";
 

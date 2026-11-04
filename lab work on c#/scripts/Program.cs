@@ -1,43 +1,44 @@
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+void PrintDescription(IDescribable obj)
+{
+    Console.WriteLine(obj.Describe());
+}
+
 using IssueLog log = new IssueLog("LOG");
-
-Console.WriteLine("-------CONSTRUCTORS-------");
-Pawn original = new Pawn();
-original.IndexInChessboard = 8;
-Pawn copied = new Pawn(original);
-Console.WriteLine($"Copied index = {copied.IndexInChessboard}");
-
-Console.WriteLine("-------COPIES-------");
-BaseChessPiece shallow = original.ShallowCopy();
-shallow.IndexInChessboard = 16;
-Console.WriteLine($"Shallow: original = {original.IndexInChessboard}, copy = {shallow.IndexInChessboard}");
-BaseChessPiece deep = original.Clone();
-deep.IndexInChessboard = 24;
-Console.WriteLine($"Deep: original = {original.IndexInChessboard}, copy = {deep.IndexInChessboard}");
-
-Console.WriteLine("-------POLYMORPHISM-------");
 BaseChessPiece[] pieces = {new Pawn(), new Rook(false)};
+
+Console.WriteLine("-------BINDING-------");
+Console.WriteLine($"Early: {pieces[0].GetClassName()}");
+Console.WriteLine($"Late: {pieces[0].Describe()}");
+
+Console.WriteLine("-------INTERFACE-------");
 foreach (BaseChessPiece piece in pieces)
-    Console.WriteLine(piece.Describe());
+{
+    if (piece is IDescribable describable)
+        PrintDescription(describable);
+}
+Pawn? pawn = pieces[0] as Pawn;
+if (pawn is not null)
+    Console.WriteLine($"Derived: {pawn.GetClassName()}");
+Console.WriteLine($"Rook is Pawn = {pieces[1] is Pawn}");
 
-Console.WriteLine("-------STRINGS-------");
-string description = pieces[0].Name + " white";
-int separator = description.IndexOf(' ');
-string name = description.Substring(0, separator);
-Console.WriteLine($"{description}, name is Pawn = {name == "Pawn"}");
+GameManagement gameManagement = new GameManagement(8, 5);
+foreach (BaseChessPiece piece in pieces)
+    gameManagement.MainChessboard.AddChessPiece(piece);
 
-Console.WriteLine("-------EQUALITY-------");
-BaseChessPiece equal = original.Clone();
-Console.WriteLine($"Equal copies = {original.Equals(equal)}, same hash = {original.GetHashCode() == equal.GetHashCode()}");
-equal.IndexInChessboard = 32;
-Console.WriteLine($"After change = {original.Equals(equal)}, different type = {original.Equals(pieces[1])}");
+Console.WriteLine("-------FORMATTER-------");
+gameManagement.SetPieceFormatter(new ShortPieceFormatter());
+Console.Write("Short: ");
+gameManagement.PrintPieceInfo(pieces[0]);
+gameManagement.SetPieceFormatter(new DetailedPieceFormatter());
+Console.Write("Detailed: ");
+gameManagement.PrintPieceInfo(pieces[0]);
 
-Console.WriteLine("-------BOARD-------");
-GameManagement gameManagement = new GameManagement(8, 10);
-gameManagement.MainChessboard.AddChessPiece(new Pawn());
-gameManagement.MainChessboard.AddChessPiece(new Rook(false));
+Console.WriteLine("-------COMPARABLE-------");
+BaseChessPiece[] sortedPieces = {pieces[1], pieces[0]};
+Array.Sort(sortedPieces);
+Console.WriteLine("Sorted: " + string.Join(", ", sortedPieces.Select(piece => piece.Name)));
+
 gameManagement.MainChessboard.Update();
-
-Console.WriteLine($"Created pieces = {BaseChessPiece.GetCreatedPiecesCount()}");
 log.Write("Program end");

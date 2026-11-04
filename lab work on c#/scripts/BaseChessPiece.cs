@@ -1,4 +1,4 @@
-public abstract class BaseChessPiece
+public abstract class BaseChessPiece : IComparable
 {
     private PiecePosition _position;
     private static int _createdPiecesCount;
@@ -37,6 +37,17 @@ public abstract class BaseChessPiece
     }
 
     public static int GetCreatedPiecesCount() => _createdPiecesCount;
+
+    public string GetClassName() => "BaseChessPiece";
+
+    public int CompareTo(object? obj)
+    {
+        if (obj is null)
+            return 1;
+        if (obj is not BaseChessPiece other)
+            throw new ArgumentException("Only chess pieces can be compared.", nameof(obj));
+        return string.Compare(Name, other.Name, StringComparison.Ordinal);
+    }
 
     public virtual string Describe() => $"{Name}: value = {ChessPieceValue}, is white = {IsWhitePiece}";
 
