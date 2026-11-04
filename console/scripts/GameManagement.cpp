@@ -1,9 +1,11 @@
 #include "GameManagement.h"
+
 GameManagement::GameManagement()
 {
-	_mainMenuContent = std::make_unique<MainMenuContent>();
-	_mainMenuFrame =
-        std::make_unique<MainMenuFrame>(*_mainMenuContent);
+	_mainMenu = std::make_unique<MainMenu>();
+	_startGameMenu = std::make_unique<StartGame>();
+
+	_activeWindow = _mainMenu.get();
 
 	Console::RefreshConsole();
 }
@@ -14,6 +16,26 @@ GameManagement& GameManagement::GetGameManagement()
 {
 	static GameManagement gameManagement;
 	return gameManagement;	
+}
+
+void GameManagement::ProcessMenuAction(MenuAction action)
+{
+    switch (action)
+    {
+	case MenuAction::MainMenu:
+		_activeWindow = _mainMenu.get();
+		_activeWindow->NowActive();
+		break;
+    case MenuAction::StartGame:
+        _activeWindow = _startGameMenu.get();
+		_activeWindow->NowActive();
+        break;
+    case MenuAction::Exit:
+        _isGameRunning = false;
+        break;
+	default:
+		break;
+	}
 }
 
 void GameManagement::SetGUIConfines(int rowCnt, int colCnt)
@@ -29,8 +51,15 @@ void GameManagement::Update()
 	{
 		Console::ResetCaret();
 
-		bool isConsoleFit =
-            Console::IsThisFitInConsole(_minRowCnt, _minColCnt);
+		bool isConsoleFit = false;
+		
+		if (_activeWindow != nullptr)
+        {
+            isConsoleFit = Console::IsThisFitInConsole(
+                _activeWindow->GetRequiredHeight(),
+                _activeWindow->GetRequiredWidth()
+            );
+        }
 
 		if (isConsoleFit != wasConsoleFit)
 		{
@@ -38,16 +67,22 @@ void GameManagement::Update()
 			wasConsoleFit = isConsoleFit;
 		}
 
-		if (isConsoleFit)
+		if (isConsoleFit && _activeWindow != nullptr)
 		{
-			_mainMenuFrame->Update();
+			_activeWindow->Update();
 		}
 		else
 			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
 
 		std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
-		PickUpInput();
+
+		if (_activeWindow != nullptr)
+		{
+			if (auto action = _activeWindow->HandleMenuSelect())
+        		ProcessMenuAction(*action);
+		}
 	}
+	Console::RefreshConsole();
 }
 
 void GameManagement::PickUpInput()

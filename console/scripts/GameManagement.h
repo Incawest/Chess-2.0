@@ -17,12 +17,16 @@ private:
     static inline int _minRowCnt = 26;
     static inline int _minColCnt = 52;
 
-    //DEBUG
-    std::unique_ptr<MainMenuContent> _mainMenuContent;
-    std::unique_ptr<MainMenuFrame> _mainMenuFrame;
+    std::unique_ptr<MainMenu> _mainMenu;
+    std::unique_ptr<StartGame> _startGameMenu;
+
+    InfoWindowBase* _activeWindow = nullptr;
+
 public:
     GameManagement(const GameManagement& other) = delete;
     static GameManagement& GetGameManagement();
+
+    void ProcessMenuAction(MenuAction action);
 
     static void SetGUIConfines(int rowCnt, int colCnt);
 	void Update() override;

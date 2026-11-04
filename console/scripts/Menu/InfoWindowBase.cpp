@@ -1,39 +1,72 @@
 #include "InfoWindowBase.h"
 
-InfoWindowBase::InfoWindowBase() = default;
 InfoWindowBase::~InfoWindowBase() = default;
 
-int InfoWindowBase::GetTitleLength() const
+InfoWindowBase::InfoWindowBase(bool isActive)
+    : _isActive{isActive} {}
+
+void InfoWindowBase::NowActive()
 {
-    return _title.size();
+    _isActive = true;
 }
 
-int InfoWindowBase::GetMaxWidth() const
+int InfoWindowBase::GetRequiredWidth() const
 {
-    size_t maxLength = 0;
+	return _totalWidth + 4;
+}
 
-    for (const std::wstring& item : _items)
+int InfoWindowBase::GetRequiredHeight() const
+{
+	return _totalHeight + 4;
+}
+
+void InfoWindowBase::SetShift(int shiftAlongX, int shiftAlongY)
+{
+    _shiftAlongX = shiftAlongX;
+    _shiftAlongY = shiftAlongY;
+}
+
+std::optional<MenuAction> InfoWindowBase::HandleMenuSelect()
+{
+    return std::nullopt;
+}
+
+void InfoWindowBase::PrintFrame() const
+{
+    Console::MoveCaret(_shiftAlongX, _shiftAlongY);
+
+    std::wcout << FrameParts::TOP_LEFT_CORNER
+        << std::wstring(_totalWidth, FrameParts::HORIZONTAL_BORDER)
+        << FrameParts::TOP_RIGHT_CORNER;
+
+    for (int i = 0; i < _totalHeight; ++i)
     {
-        if (item.length() > maxLength)
-            maxLength = item.length();
+        Console::MoveCaret(_shiftAlongX, _shiftAlongY + 1 + i);
+
+        bool hasBoundary = std::find(
+            _boundaryIndices.begin(),
+            _boundaryIndices.end(),
+            i
+        ) != _boundaryIndices.end();
+
+        if (hasBoundary)
+        {
+            std::wcout << FrameParts::BOUNDARY_LEFT;
+            std::wcout << std::wstring(_totalWidth, FrameParts::HORIZONTAL_BORDER);
+            std::wcout << FrameParts::BOUNDARY_RIGHT;
+        }
+        else 
+        {
+            std::wcout << FrameParts::VERTICAL_BORDER;
+            Console::MoveCaret(_shiftAlongX+_totalWidth+1, _shiftAlongY + 1 + i);
+            std::wcout << FrameParts::VERTICAL_BORDER;
+        }
     }
 
-    maxLength = (_title.length() > maxLength) ? _title.length() : maxLength;
+    Console::MoveCaret(_shiftAlongX, _shiftAlongY + _totalHeight + 1);
 
-    return static_cast<int>(maxLength);
-}
-
-int InfoWindowBase::GetCountRows() const
-{
-    return _countRows;
-}
-
-const std::wstring& InfoWindowBase::GetTitle() const
-{
-    return _title;
-}
-
-const std::vector<std::wstring>& InfoWindowBase::GetItems() const
-{
-    return _items;
+    std::wcout << FrameParts::BOTTOM_LEFT_CORNER
+        << std::wstring(_totalWidth, FrameParts::HORIZONTAL_BORDER)
+        << FrameParts::BOTTOM_RIGHT_CORNER
+        << std::flush;
 }
