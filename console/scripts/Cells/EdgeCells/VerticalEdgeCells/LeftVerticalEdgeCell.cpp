@@ -11,7 +11,7 @@ LeftVerticalEdgeCell::LeftVerticalEdgeCell(wchar_t edgeChar, int markedDigit, co
         Console::SetTextColor(_cellColor);
         std::wcout << _MARKED_DIGIT;
         Console::SetTextColor(pastTextColor);
-        DrawEmptyLine(_NEXT_TO_LAST_COL);
+        Utilits::DrawEmptyLine(_NEXT_TO_LAST_COL);
     },edgeChar, markedDigit, cellColor}
 {
 }

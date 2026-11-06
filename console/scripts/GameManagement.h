@@ -2,28 +2,38 @@
 
 #include <conio.h>
 #include <iostream>
-//#include <thread>
-
-#include "IUpdatable.h"
+#include <unordered_set>
 #include "BaseChessboard.h"
+#include "Blinkable.h"
 #include "Console.h"
+#include "IUpdatable.h"
+#include "Player.h"
 
 class GameManagement : public IUpdatable
 {
-private:
-    //static inline const auto _FRAME_DELAY_MIL_SEC = std::chrono::milliseconds(100);
-    bool _isGameRunning = true;
-    static inline int _minRowCnt = 26;
-    static inline int _minColCnt = 52;
-
-    //DEBUG
-    BaseChessboard* _chessboard;
 public:
+    enum class GameState
+    {
+        OFF,
+        MAIN_MENU,
+        PIECE_SELECTION,
+        PATH_SELECTION
+    };
+private:
+    GameState _currentGameState = GameState::PIECE_SELECTION;
+    static inline int _minRowCnt = 28;
+    static inline int _minColCnt = 55;
+
+    std::shared_ptr<BaseChessboard> _chessboard;
+
+    std::unique_ptr<Player> _activePlayer;
+    std::unique_ptr<Player> _inactivePlayer;
+public:
+    static GameManagement& GetGameManagement() noexcept;
+    static void SetGUIConfines(int rowCnt, int colCnt);
+
     GameManagement(const GameManagement& other) = delete;
     GameManagement& operator=(const GameManagement& other) = delete;
-
-    static GameManagement& GetGameManagement();
-    static void SetGUIConfines(int rowCnt, int colCnt);
 
     void StartGame();
 	void Update() override;

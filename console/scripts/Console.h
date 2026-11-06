@@ -27,21 +27,21 @@ public:
     
     struct Color final
     {
-        static inline const RGB BLACK = {0, 0, 0};
-        static inline const RGB BLUE = {0, 0, 255};
-        static inline const RGB CYAN = {0, 255, 255};
-        static inline const RGB GRAY = {128, 128, 128};
-        static inline const RGB GREEN = {0, 255, 0};
-        static inline const RGB LIGHT_BLUE = {173, 216, 230};
-        static inline const RGB LIGHT_CYAN = {224, 255, 255};
-        static inline const RGB LIGHT_GREEN = {144, 238, 144};
-        static inline const RGB LIGHT_MAGENTA = {255, 182, 255};
-        static inline const RGB LIGHT_RED = {255, 182, 193};
-        static inline const RGB LIGHT_YELLOW = {255, 255, 182};
-        static inline const RGB MAGENTA = {255, 0, 255};
-        static inline const RGB RED = {255, 0, 0};
-        static inline const RGB WHITE = {255, 255, 255};
-        static inline const RGB YELLOW = {255, 255, 0};
+        static inline const RGB BLACK = RGB{0, 0, 0};
+        static inline const RGB BLUE = RGB{0, 0, 255};
+        static inline const RGB CYAN = RGB{0, 255, 255};
+        static inline const RGB GRAY = RGB{128, 128, 128};
+        static inline const RGB GREEN = RGB{0, 255, 0};
+        static inline const RGB LIGHT_BLUE = RGB{173, 216, 230};
+        static inline const RGB LIGHT_CYAN = RGB{224, 255, 255};
+        static inline const RGB LIGHT_GREEN = RGB{144, 238, 144};
+        static inline const RGB LIGHT_MAGENTA = RGB{255, 182, 255};
+        static inline const RGB LIGHT_RED = RGB{255, 182, 193};
+        static inline const RGB LIGHT_YELLOW = RGB{255, 255, 182};
+        static inline const RGB MAGENTA = RGB{255, 0, 255};
+        static inline const RGB RED = RGB{255, 0, 0};
+        static inline const RGB WHITE = RGB{255, 255, 255};
+        static inline const RGB YELLOW = RGB{255, 255, 0};
 
         virtual ~Color() = 0;
     };

@@ -7,7 +7,7 @@ RightVerticalEdgeCell::RightVerticalEdgeCell(wchar_t edgeChar, int markedDigit) 
 
 RightVerticalEdgeCell::RightVerticalEdgeCell(wchar_t edgeChar, int markedDigit, const RGB* cellColor) :
     BaseVerticalEdgeCell{[this](){
-        DrawEmptyLine(_NEXT_TO_LAST_COL);
+        Utilits::DrawEmptyLine(_NEXT_TO_LAST_COL);
         auto pastTextColor = Console::GetTextColor();
         Console::SetTextColor(_cellColor);
         std::wcout << _MARKED_DIGIT;

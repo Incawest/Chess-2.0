@@ -4,36 +4,44 @@ BaseBoardCell::CellboardParts::~CellboardParts() = default;
 
 BaseBoardCell::BaseBoardCell() = default;
 
-BaseBoardCell::BaseBoardCell(const RGB* cellColor) : _cellColor{cellColor}
+BaseBoardCell::BaseBoardCell(const RGB* cellColor) : BaseCell{cellColor}
 {
 }
 
-BaseBoardCell::BaseBoardCell(const RGB* cellColor, std::weak_ptr<ChessPiece> piece) : BaseBoardCell(cellColor) 
+BaseBoardCell::BaseBoardCell(const RGB* cellColor, std::weak_ptr<ChessPiece> piece) : BaseBoardCell{cellColor} 
 {
     SetPieceOnCell(piece);
 }
 
-const RGB* BaseBoardCell::GetPieceColor() const
+std::shared_ptr<ChessPiece> BaseBoardCell::GetChessPiece() const noexcept
 {
-    auto piece = _piece.lock();
-    if ( piece != nullptr)
-    {
-        return piece->GetColor();
-    }
-    else
-    {
-        return nullptr;
-    }
+    return _piece.lock();
 }
 
-const RGB* BaseBoardCell::GetCellColor() const
+void BaseBoardCell::SetSelection(bool isSelected)
 {
-    return _cellColor;
+    if (!(_isMarked && _piece.lock() == nullptr))
+    {
+        BaseCell::SetSelection(isSelected);
+        isSelected ? Blinkable::PushUpdatingBlinkable(this) : Blinkable::EraseUpdatingBlinkable(this);
+    }
+    else if (_isSelected)
+        Blinkable::EraseUpdatingBlinkable(this);
+    
+    _isSelected = isSelected;
 }
 
-void BaseBoardCell::SetPieceOnCell(
-    std::weak_ptr<ChessPiece> piece
-) 
+void BaseBoardCell::SetMark(bool isMarked)
+{
+    auto realPiece = _piece.lock();
+    if (realPiece != nullptr)
+        realPiece->SetIsCapturable(isMarked);
+    _isMarked = isMarked;
+
+    SetSelection(_isSelected);
+}
+
+void BaseBoardCell::SetPieceOnCell(std::weak_ptr<ChessPiece> piece) noexcept
 {
     _piece = piece;
 }
@@ -58,19 +66,35 @@ void BaseBoardCell::DrawCell(int line) const
     }
     else
     {
-        std::wcout << CellboardParts::VERTICAL_BORDER;
+        std::wcout << CellboardParts::VERTICAL_BORDER << L' ';
         
         auto piece = _piece.lock();
         if (piece != nullptr) 
         {
-            if (_cellColor != nullptr)
-                piece->DrawPiece();
+            piece->DrawPiece();
+        }
+        else if (_isMarked)
+        {
+            if (_isSelected)
+            {
+                const RGB* curCellColor = Console::GetTextColor();
+                Console::SetTextColor(_SELECTED_CELL_COLOR);  
+                std::wcout << _CHARACTER_MARK;
+                Console::SetTextColor(curCellColor);
+            }
+            else
+                std::wcout << _CHARACTER_MARK;
         }
         else
-            DrawEmptyLine(_HORIZONTAL_WIDTH);
+            std::wcout << L' ';
 
-        std::wcout << CellboardParts::VERTICAL_BORDER;
+        std::wcout << L' ' << CellboardParts::VERTICAL_BORDER;
     }
 
     Console::SetTextColor(pastTextColor);
+}
+
+void BaseBoardCell::Update()
+{
+    BaseCell::SetSelection(GetIsShining());
 }

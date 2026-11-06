@@ -2,6 +2,7 @@
 
 #include "BaseEdgeCell.h"
 #include "CellsConfiguration.h"
+#include "Utilits.h"
 
 class BaseVerticalEdgeCell : public BaseEdgeCell<CellsConfiguration::VERTICAL_EDGE_WIDTH, CellsConfiguration::BASE_HEIGHT>
 {
@@ -11,7 +12,7 @@ protected:
     static inline constexpr int _MID_HEIGHT = HEIGHT / 2;
     const int _MARKED_DIGIT;
     const std::function<void()> _DRAW_EMPTY_LINE_BEYOND_CHESSBOARD_FUNC = [this](){
-        this->DrawEmptyLine(this->_LAST_COL);
+        Utilits::DrawEmptyLine(_LAST_COL);
     };
     const std::function<void()> _DRAW_LINE_BEYOND_CHESSBOARD_FUNC;
 public:

@@ -41,4 +41,13 @@ protected:
             drawEdgeCharsFunc();
         Console::SetTextColor(pastTextColor);
     }
+    
+    void DrawLineBeyondChessboard(const std::function<void()>& drawLineFunction) const
+    {
+        const Console::RGB* pastBgColor = Console::GetBGColor();
+        Console::ResetBGColor();
+        if(drawLineFunction != nullptr)
+            drawLineFunction();
+        Console::SetBGColor(pastBgColor);
+    }
 };

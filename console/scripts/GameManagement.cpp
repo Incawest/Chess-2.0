@@ -1,15 +1,6 @@
 #include "GameManagement.h"
-GameManagement::GameManagement()
-{
-	_chessboard = new BaseChessboard{8};
-}
 
-GameManagement::~GameManagement()
-{
-	delete _chessboard;
-}
-
-GameManagement& GameManagement::GetGameManagement()
+GameManagement& GameManagement::GetGameManagement() noexcept
 {
 	static GameManagement gameManagement;
 	return gameManagement;	
@@ -21,19 +12,31 @@ void GameManagement::SetGUIConfines(int rowCnt, int colCnt)
 	_minColCnt = colCnt + 1;
 }
 
+GameManagement::GameManagement() = default;
+GameManagement::~GameManagement() = default;
+
+void GameManagement::StartGame()
+{
+	_chessboard = std::make_shared<BaseChessboard>(8);
+	_activePlayer = std::make_unique<Player>(_chessboard, true);
+	_inactivePlayer = std::make_unique<Player>(_chessboard, false);
+
+	_activePlayer->ActivateSelection();
+}
+
 void GameManagement::Update()
 {
-	while (_isGameRunning)
+	while (_currentGameState != GameState::OFF)
 	{
 		Console::ResetCaret();
 		if (Console::IsThisFitInConsole(_minRowCnt, _minColCnt))
 		{
+			Blinkable::UpdateAll();
 			_chessboard->Update();
 		}
 		else
 			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
 
-		//std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
 		PickUpInput();
 	}
 }
@@ -43,15 +46,54 @@ void GameManagement::PickUpInput()
 	if (_kbhit())
 	{
 		int inputCode = _getch();
-		if (inputCode == 27)
-			_isGameRunning = false;
+		if (inputCode == 13)
+		{
+			if (_currentGameState == GameState::PIECE_SELECTION)
+			{
+				if (_activePlayer->FixSelection())
+					_currentGameState = GameState::PATH_SELECTION;
+			}
+		}
+		else if (inputCode == 27)
+		{
+			if (_currentGameState == GameState::PATH_SELECTION)
+			{
+				_currentGameState = GameState::PIECE_SELECTION;
+				_activePlayer->UnfixSelection();
+			}
+			else
+				_currentGameState = GameState::OFF;
+		}
 		else if (inputCode == 0 || inputCode == 224)
 		{
 			inputCode = _getch();
 			if(inputCode == 98)
 				Console::RefreshConsole();
-			else if(inputCode == 75);
-			else if(inputCode == 77);
+			else if (inputCode == 72)
+			{
+				if (_currentGameState == GameState::PATH_SELECTION)
+					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::UP);
+			}
+			else if(inputCode == 75)
+			{
+				if (_currentGameState == GameState::PIECE_SELECTION)
+					_activePlayer->GoToNextSelection(false);
+				else if (_currentGameState == GameState::PATH_SELECTION)
+					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::LEFT);
+					
+			}
+			else if(inputCode == 77)
+			{
+				if (_currentGameState == GameState::PIECE_SELECTION)
+					_activePlayer->GoToNextSelection(true);
+				else if (_currentGameState == GameState::PATH_SELECTION)
+					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::RIGHT);
+			}
+			else if (inputCode == 80)
+			{
+				if (_currentGameState == GameState::PATH_SELECTION)
+					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::DOWN);
+			}
 		}
 	}
 }
