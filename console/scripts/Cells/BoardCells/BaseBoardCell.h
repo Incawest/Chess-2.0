@@ -27,27 +27,27 @@ private:
         static inline constexpr wchar_t BOTTOM_LEFT_CORNER = L'\u2514';
         static inline constexpr wchar_t BOTTOM_RIGHT_CORNER = L'\u2518';
 
-        virtual ~CellboardParts() = 0;
+        CellboardParts() = delete;
     };
 
 private:
-    static inline constexpr int _LAST_LINE = HEIGHT - 1;
-    static inline constexpr int _HORIZONTAL_WIDTH = WIDTH - 2;
-    static inline constexpr wchar_t _CHARACTER_MARK = L'*';
+    static inline constexpr std::size_t LAST_LINE = HEIGHT - 1;
+    static inline constexpr std::size_t HORIZONTAL_WIDTH = WIDTH - 2;
+    static inline constexpr wchar_t CHARACTER_MARK = L'*';
     bool _isSelected = false;
     bool _isMarked = false;
     
     std::weak_ptr<ChessPiece> _piece;
 
 public:
-    BaseBoardCell();
-    BaseBoardCell(const RGB* cellColor);
+    BaseBoardCell() = default;
+    explicit BaseBoardCell(const RGB* cellColor);
     BaseBoardCell(const RGB* cellColor, std::weak_ptr<ChessPiece> piece);
     std::shared_ptr<ChessPiece> GetChessPiece() const noexcept;
     void SetSelection(bool isSelected) override;
     void SetMark(bool isMakred);
     void SetPieceOnCell(std::weak_ptr<ChessPiece> piece) noexcept;
-    void DrawCell(int line) const override;
+    void DrawCell(std::size_t line) const override;
 
     void Update() override;
 };

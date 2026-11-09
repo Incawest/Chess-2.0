@@ -18,41 +18,21 @@ public:
 
     private:
         friend struct Color;
-        RGB(int r, int g, int b);
-        RGB(const RGB& other);
-        RGB(RGB&& other) noexcept;
-        RGB& operator=(const RGB& other);
-        RGB& operator=(RGB&& other) noexcept;
-    };
-    
-    struct Color final
-    {
-        static inline const RGB BLACK = RGB{0, 0, 0};
-        static inline const RGB BLUE = RGB{0, 0, 255};
-        static inline const RGB CYAN = RGB{0, 255, 255};
-        static inline const RGB GRAY = RGB{128, 128, 128};
-        static inline const RGB GREEN = RGB{0, 255, 0};
-        static inline const RGB LIGHT_BLUE = RGB{173, 216, 230};
-        static inline const RGB LIGHT_CYAN = RGB{224, 255, 255};
-        static inline const RGB LIGHT_GREEN = RGB{144, 238, 144};
-        static inline const RGB LIGHT_MAGENTA = RGB{255, 182, 255};
-        static inline const RGB LIGHT_RED = RGB{255, 182, 193};
-        static inline const RGB LIGHT_YELLOW = RGB{255, 255, 182};
-        static inline const RGB MAGENTA = RGB{255, 0, 255};
-        static inline const RGB RED = RGB{255, 0, 0};
-        static inline const RGB WHITE = RGB{255, 255, 255};
-        static inline const RGB YELLOW = RGB{255, 255, 0};
-
-        virtual ~Color() = 0;
+        constexpr RGB(int r, int g, int b) noexcept : r{r}, g{g}, b{b}
+        {
+        }
+        RGB(const RGB& other) noexcept = default;
+        RGB(RGB&& other) noexcept = default;
+        RGB& operator=(const RGB& other) noexcept = default;
+        RGB& operator=(RGB&& other) noexcept = default;
     };
 
 private:
     static inline const RGB* _textColor = nullptr;
     static inline const RGB* _bgColor = nullptr;
-    static inline const HANDLE _OUTPUT_HANDLE = GetStdHandle(STD_OUTPUT_HANDLE);
+    static inline const HANDLE OUTPUT_HANDLE = GetStdHandle(STD_OUTPUT_HANDLE);
 public:
-    virtual ~Console() = 0;
-
+    Console() = delete;
     static const RGB* GetTextColor();
     static const RGB* GetBGColor();
     static void SetTextColor(const RGB* Color);
@@ -66,3 +46,23 @@ public:
     static bool IsThisFitInConsole(int rowCnt, int colCnt);
 };
 
+struct Console::Color final
+{
+    static constexpr RGB BLACK{0, 0, 0};
+    static constexpr RGB BLUE{0, 0, 255};
+    static constexpr RGB CYAN{0, 255, 255};
+    static constexpr RGB GRAY{128, 128, 128};
+    static constexpr RGB GREEN{0, 255, 0};
+    static constexpr RGB LIGHT_BLUE{173, 216, 230};
+    static constexpr RGB LIGHT_CYAN {224, 255, 255};
+    static constexpr RGB LIGHT_GREEN{144, 238, 144};
+    static constexpr RGB LIGHT_MAGENTA{255, 182, 255};
+    static constexpr RGB LIGHT_RED{255, 182, 193};
+    static constexpr RGB LIGHT_YELLOW{255, 255, 182};
+    static constexpr RGB MAGENTA{255, 0, 255};
+    static constexpr RGB RED{255, 0, 0};
+    static constexpr RGB WHITE{255, 255, 255};
+    static constexpr RGB YELLOW{255, 255, 0};
+
+    Color() = delete;
+};

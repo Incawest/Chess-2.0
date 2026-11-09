@@ -12,7 +12,7 @@ private:
     using Clock = std::chrono::steady_clock;
     using TimePoint = Clock::time_point;
 private:
-    static inline constexpr int _BLINKING_FREQUENCY_MS = 500;
+    static constexpr int BLINKING_FREQUENCY_MS = 500;
     static inline bool _isShining = false; 
     static inline std::optional<TimePoint> _blinkingTimer = std::nullopt;
     static inline std::unordered_set<Blinkable*> _updatingBlinkables{};
@@ -38,7 +38,7 @@ public:
     {
         if (!_blinkingTimer.has_value())
             _blinkingTimer = Clock::now();
-        else if (Clock::now() - *_blinkingTimer >= std::chrono::milliseconds(_BLINKING_FREQUENCY_MS))
+        else if (Clock::now() - *_blinkingTimer >= std::chrono::milliseconds(BLINKING_FREQUENCY_MS))
         {
             std::erase_if(_updatingBlinkables, [](const Blinkable* el){
                 return el == nullptr;
@@ -64,7 +64,7 @@ public:
     Blinkable& operator=(const Blinkable& other) = default;
 
 protected:
-    inline bool GetIsShining() const noexcept
+    bool GetIsShining() const noexcept
     {
         return _isShining;
     }

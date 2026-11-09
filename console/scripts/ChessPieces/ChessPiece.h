@@ -19,8 +19,6 @@ class ChessPiece : public Blinkable
 public:
     struct MovePosition
     {
-    public:
-        std::unique_ptr<MovePosition> nextPosInPath;
     private:
         friend ChessPiece;
         Vector2 _position{0, 0};
@@ -28,7 +26,6 @@ public:
     public:
         MovePosition() noexcept;
         MovePosition(Vector2 position, bool isMoveForCapturingPieceOnly) noexcept;
-        MovePosition(Vector2 position, bool isMoveForCapturingPieceOnly, std::unique_ptr<MovePosition> nextPosInPath) noexcept;
         Vector2 GetPosition() const noexcept;
         bool GetIsMoveForCapturingPieceOnly() const noexcept;
     };
@@ -44,15 +41,15 @@ protected:
     bool _isCapturable = false;
     const RGB* _pieceColor;
     Vector2 _position{0, 0};
-    std::vector<MovePosition> _pathsForMoves;
+    std::vector<std::vector<MovePosition>> _pathsForMoves;
 
 private:
-    static inline const Console::RGB* const _CAPTURABLE_PIECE_COLOR = &Console::Color::RED;
+    static constexpr const Console::RGB* CAPTURABLE_PIECE_COLOR = &Console::Color::RED;
     const RGB* _defaultPieceColor;
     bool _isAlive = true;
 
 public:
-    ChessPiece(const Key& constructorKey, bool isWhite, wchar_t type, std::size_t pathsForMovesCount);
+    ChessPiece(const Key& constructorKey, wchar_t type, bool isWhite, std::size_t pathsForMovesCount);
 
     virtual ~ChessPiece();
     
@@ -78,7 +75,7 @@ public:
     const RGB* GetColor() const noexcept;
     Vector2 GetPosition() const noexcept;
     std::size_t GetCountOfFullPaths() const noexcept;
-    std::vector<MovePosition> GetFullPathForMove(int pathForMoveIndex, Vector2 anchoredPosition) const;
+    std::span<const MovePosition> GetFullPathForMove(int pathForMoveIndex) const;
     void SetIsCapturable(bool isCapturable);
     void SetPosition(Vector2 position) noexcept;
     void DrawPiece() const;

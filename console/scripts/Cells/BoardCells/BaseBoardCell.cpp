@@ -1,9 +1,4 @@
 #include "BaseBoardCell.h"
-
-BaseBoardCell::CellboardParts::~CellboardParts() = default;
-
-BaseBoardCell::BaseBoardCell() = default;
-
 BaseBoardCell::BaseBoardCell(const RGB* cellColor) : BaseCell{cellColor}
 {
 }
@@ -46,7 +41,7 @@ void BaseBoardCell::SetPieceOnCell(std::weak_ptr<ChessPiece> piece) noexcept
     _piece = piece;
 }
 
-void BaseBoardCell::DrawCell(int line) const
+void BaseBoardCell::DrawCell(std::size_t line) const
 {
     const RGB* pastTextColor = Console::GetTextColor();
     Console::SetTextColor(_cellColor);
@@ -54,14 +49,14 @@ void BaseBoardCell::DrawCell(int line) const
     if (line == 0)
     {
         std::wcout << CellboardParts::TOP_LEFT_CORNER;
-        std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
+        std::wcout << std::wstring(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
         std::wcout << CellboardParts::TOP_RIGHT_CORNER;
     }
     
-    else if (line == _LAST_LINE)
+    else if (line == LAST_LINE)
     {
         std::wcout << CellboardParts::BOTTOM_LEFT_CORNER;
-        std::wcout << std::wstring(_HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
+        std::wcout << std::wstring(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
         std::wcout << CellboardParts::BOTTOM_RIGHT_CORNER;
     }
     else
@@ -78,12 +73,12 @@ void BaseBoardCell::DrawCell(int line) const
             if (_isSelected)
             {
                 const RGB* curCellColor = Console::GetTextColor();
-                Console::SetTextColor(_SELECTED_CELL_COLOR);  
-                std::wcout << _CHARACTER_MARK;
+                Console::SetTextColor(SELECTED_CELL_COLOR);  
+                std::wcout << CHARACTER_MARK;
                 Console::SetTextColor(curCellColor);
             }
             else
-                std::wcout << _CHARACTER_MARK;
+                std::wcout << CHARACTER_MARK;
         }
         else
             std::wcout << L' ';

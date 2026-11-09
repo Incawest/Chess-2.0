@@ -1,0 +1,41 @@
+#pragma once
+
+#include "BaseEdgeCell.h"
+#include "CellsConfiguration.h"
+#include "Utilits.h"
+
+class HorizontalEdgeCell : public BaseEdgeCell<CellsConfiguration::BASE_WIDTH, CellsConfiguration::HORIZONTAL_EDGE_HEIGHT>
+{
+    static_assert(HEIGHT >= 2);
+public:
+    enum class Type{
+        TOP,
+        BOTTOM
+    };
+private:
+    static constexpr std::size_t HALF_WIDTH = WIDTH / 2;
+    const wchar_t MARKED_LETTER;
+    const Type SIDE_TYPE;
+    const std::size_t FILLED_LINE;
+    const std::size_t MARKED_LINE;
+public:
+    HorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, const RGB* cellColor, Type sideType) :     
+        BaseEdgeCell{edgeChar, cellColor}, MARKED_LETTER{markedLetter}, SIDE_TYPE{sideType},
+        FILLED_LINE{SIDE_TYPE == Type::TOP ? HEIGHT - 1 : 0}, MARKED_LINE{SIDE_TYPE == Type::TOP ? HEIGHT - 2 : 1}
+    {   
+    }
+    HorizontalEdgeCell(wchar_t edgeChar, wchar_t markedLetter, Type sideType) : 
+        HorizontalEdgeCell{edgeChar, markedLetter, nullptr, sideType}
+    {
+    }
+
+    void DrawCell(std::size_t line) const override
+    {
+        if (line == FILLED_LINE)
+            DrawEdgeChars(WIDTH);
+        else if (line == MARKED_LINE)
+            DrawOutsideLine(std::wstring_view(&MARKED_LETTER, 1), HALF_WIDTH, HALF_WIDTH);
+        else
+            DrawOutsideLine({}, WIDTH);
+    }
+};

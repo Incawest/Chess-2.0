@@ -11,19 +11,16 @@
 class Player
 {
 private:
-    std::weak_ptr<BaseChessboard> _chessboard;
+    std::shared_ptr<BaseChessboard> _chessboard;
     std::vector<std::shared_ptr<ChessPiece>> _chessPieces;
     int _selectedPieceIndex = -1;
 
 public:
-    Player(std::weak_ptr<BaseChessboard> chessboard, bool isOnWhiteTeam);
+    Player(std::shared_ptr<BaseChessboard> chessboard, bool isOnWhiteTeam);
     void ActivateSelection();
-    void GoToNextSelection(bool toGoForward);
-    bool FixSelection();
-    void UnfixSelection();
+    void GoToNextSelection(Utilits::DeltaMove direction);
     void DeactivateSelection();
 
-    void GoToNextPathForMove(BaseChessboard::DeltaMove direction);
 private:
     void SetDefaultChessPiecesSetup(bool isOnWhiteTeam);
 };

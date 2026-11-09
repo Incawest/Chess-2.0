@@ -1,53 +1,56 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
 
 #include "BaseCell.h"
 #include "Console.h"
+#include "Utilits.h"
 
 using Color = Console::Color;
 using RGB = Console::RGB;
 
-template<int width, int height>
-requires(width > 0 && height > 0)
+template<std::size_t width, std::size_t height>
+requires(width >= 1 && height >= 1)
 class BaseEdgeCell : public BaseCell<width, height>
 {
 protected:
-    const wchar_t _EDGE_CHAR;
-    const std::function<void()> _DRAW_EDGE_CHARS_FUNC;
+    const wchar_t EDGE_CHAR;
 public:
-    BaseEdgeCell(wchar_t edgeChar) : BaseEdgeCell{edgeChar, nullptr}
+    BaseEdgeCell(wchar_t edgeChar, const RGB* cellColor) :  BaseCell<width, height>{cellColor}, EDGE_CHAR{edgeChar}
     {
     }
-    BaseEdgeCell(wchar_t edgeChar, const RGB* cellColor) : BaseEdgeCell{[this](){
-            std::wcout << _EDGE_CHAR;
-        }, edgeChar, cellColor}
-    {
-    }
-    BaseEdgeCell(std::function<void()> drawEdgeCharsFunc, wchar_t edgeChar) : BaseEdgeCell{drawEdgeCharsFunc, edgeChar, nullptr}
-    {
-    }
-    BaseEdgeCell(std::function<void()> drawEdgeCharsFunc, wchar_t edgeChar, const RGB* cellColor) : 
-        BaseCell<width, height>{cellColor}, _DRAW_EDGE_CHARS_FUNC{drawEdgeCharsFunc}, _EDGE_CHAR{edgeChar}
+
+    explicit BaseEdgeCell(wchar_t edgeChar) : BaseEdgeCell{edgeChar, nullptr}
     {
     }
 protected:
-    void DrawEdge(const std::function<void()>& drawEdgeCharsFunc) const
+    void DrawOutsideLine(std::wstring_view line, std::size_t leftPadding, std::size_t rightPadding = 0) const
     {
-        auto pastTextColor = Console::GetTextColor();
-        Console::SetTextColor(this->_cellColor);
-        if (drawEdgeCharsFunc != nullptr)
-            drawEdgeCharsFunc();
-        Console::SetTextColor(pastTextColor);
-    }
-    
-    void DrawLineBeyondChessboard(const std::function<void()>& drawLineFunction) const
-    {
-        const Console::RGB* pastBgColor = Console::GetBGColor();
+        const RGB* previousBGColor = Console::GetBGColor();
         Console::ResetBGColor();
-        if(drawLineFunction != nullptr)
-            drawLineFunction();
-        Console::SetBGColor(pastBgColor);
+        Utilits::DrawEmptyLine(leftPadding);
+
+        if (!line.empty())
+        {
+            const RGB* previousTextColor = Console::GetTextColor();
+            Console::SetTextColor(this->_cellColor);
+            std::wcout << line;
+            Console::SetTextColor(previousTextColor);
+        }
+
+        Utilits::DrawEmptyLine(rightPadding);
+        Console::SetBGColor(previousBGColor);
     }
+
+    void DrawEdgeChars(std::size_t count) const
+    {
+        const RGB* previousColor = Console::GetTextColor();
+        Console::SetTextColor(this->_cellColor);
+
+        for (std::size_t i = 0; i < count; ++i)
+            std::wcout << EDGE_CHAR;
+
+        Console::SetTextColor(previousColor);
+    }
+
 };

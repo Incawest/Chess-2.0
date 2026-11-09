@@ -1,18 +1,5 @@
 #include "Console.h"
 
-Console::RGB::RGB(int r, int g, int b) : r{r}, g{g}, b{b}
-{
-}
-
-Console::RGB::RGB(const RGB& other) = default;
-Console::RGB::RGB(RGB&& other) noexcept = default;
-Console::RGB& Console::RGB::operator=(const RGB& other) = default;
-Console::RGB& Console::RGB::operator=(RGB&& other) noexcept = default;
-
-Console::Color::~Color() = default;
-
-Console::~Console() = default;
-
 const Console::RGB* Console::GetTextColor()
 {
     return _textColor;
@@ -68,19 +55,19 @@ void Console::ResetConsoleColor()
 
 void Console::ResetCaret()
 {
-	std::wcout << L"\033[3J\033[1;1H" << std::flush;
+	std::wcout << L"\033[1;1H" << std::flush;
 }
 
 void Console::RefreshConsole()
 {
-    std::wcout << L"\033[2J";
+    std::wcout << L"\033[2J\033[3J";
     ResetCaret();
 }
 
 bool Console::IsThisFitInConsole(int rowCnt, int colCnt)
 {
     CONSOLE_SCREEN_BUFFER_INFO info;
-    if (!GetConsoleScreenBufferInfo(_OUTPUT_HANDLE, &info))
+    if (!GetConsoleScreenBufferInfo(OUTPUT_HANDLE, &info))
         return false;
     int consoleRowCnt = info.srWindow.Bottom - info.srWindow.Top + 1;
     int consoleColCnt = info.srWindow.Right - info.srWindow.Left + 1;

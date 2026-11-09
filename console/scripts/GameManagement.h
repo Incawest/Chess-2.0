@@ -2,7 +2,6 @@
 
 #include <conio.h>
 #include <iostream>
-#include <unordered_set>
 #include "BaseChessboard.h"
 #include "Blinkable.h"
 #include "Console.h"

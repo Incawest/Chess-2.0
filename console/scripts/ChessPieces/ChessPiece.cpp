@@ -2,13 +2,9 @@
 
 ChessPiece::MovePosition::MovePosition() noexcept = default;
 
-ChessPiece::MovePosition::MovePosition(Vector2 position, bool isMoveForCapturingPieceOnly) noexcept : 
-    ChessPiece::MovePosition::MovePosition{position, isMoveForCapturingPieceOnly, nullptr}
-{
-}
 
-ChessPiece::MovePosition::MovePosition(Vector2 position, bool isMoveForCapturingPieceOnly, std::unique_ptr<MovePosition> nextPosInPath) noexcept : 
-    _position{position}, _isMoveForCapturingPieceOnly{isMoveForCapturingPieceOnly}, nextPosInPath{std::move(nextPosInPath)}
+ChessPiece::MovePosition::MovePosition(Vector2 position, bool isMoveForCapturingPieceOnly) noexcept : 
+    _position{position}, _isMoveForCapturingPieceOnly{isMoveForCapturingPieceOnly}
 {
 }
 
@@ -19,11 +15,11 @@ Vector2 ChessPiece::MovePosition::GetPosition() const noexcept
 
 bool ChessPiece::MovePosition::GetIsMoveForCapturingPieceOnly() const noexcept
 {
-    return nextPosInPath == nullptr && _isMoveForCapturingPieceOnly;
+    return _isMoveForCapturingPieceOnly;
 }
 
-ChessPiece::ChessPiece( const ChessPiece::Key& constructorKey, bool isWhite, wchar_t character, std::size_t pathsForMovesCount) : 
-_isWhite{isWhite}, _character{character}
+ChessPiece::ChessPiece([[maybe_unused]] const ChessPiece::Key& constructorKey, wchar_t character, 
+    bool isWhite, std::size_t pathsForMovesCount) : _character{character}, _isWhite{isWhite}
 {
     if (isWhite == true) 
     {
@@ -60,30 +56,24 @@ std::size_t ChessPiece::GetCountOfFullPaths() const noexcept
     return _pathsForMoves.size();
 }
 
-std::vector<ChessPiece::MovePosition> ChessPiece::GetFullPathForMove(int pathForMoveIndex, Vector2 anchoredPosition) const
+std::span<const ChessPiece::MovePosition> ChessPiece::GetFullPathForMove(int pathForMoveIndex) const
 {
     if (pathForMoveIndex < 0 || pathForMoveIndex >= _pathsForMoves.size())
-        return std::vector<ChessPiece::MovePosition>{};
-    const ChessPiece::MovePosition* curMovePosition = &_pathsForMoves[pathForMoveIndex];
-    std::vector<ChessPiece::MovePosition> fullPathForMove{};
-    do
-    {
-        fullPathForMove.push_back(MovePosition{curMovePosition->GetPosition() + anchoredPosition, curMovePosition->GetIsMoveForCapturingPieceOnly()});
-        curMovePosition = curMovePosition->nextPosInPath.get();
-    } while (curMovePosition != nullptr);
-    return fullPathForMove;
+        return {};
+    else
+        return _pathsForMoves[pathForMoveIndex];
 }
 
-void ChessPiece::SetIsCapturable(bool isCapturable) noexcept
+void ChessPiece::SetIsCapturable(bool isCapturable)
 {
     if (isCapturable)
     {
-        _pieceColor = _defaultPieceColor;
+        _pieceColor = CAPTURABLE_PIECE_COLOR;
         Blinkable::PushUpdatingBlinkable(this);
     }
     else
     {
-        _pieceColor = _CAPTURABLE_PIECE_COLOR;
+        _pieceColor = _defaultPieceColor;
         Blinkable::EraseUpdatingBlinkable(this);
     }
 
@@ -106,5 +96,5 @@ void ChessPiece::DrawPiece() const
 void ChessPiece::Update()
 {
     if (_isCapturable)
-        _pieceColor = GetIsShining() ? _CAPTURABLE_PIECE_COLOR : _defaultPieceColor ;
+        _pieceColor = GetIsShining() ? CAPTURABLE_PIECE_COLOR : _defaultPieceColor ;
 }

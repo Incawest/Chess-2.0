@@ -5,27 +5,29 @@
 
 #include "Console.h"
 
-template<int width, int height>
-requires(width > 0 && height > 0)
+template<std::size_t width, std::size_t height>
+requires(width >= 1 && height >= 1)
 class BaseCell
 {
 public:
-    static inline constexpr int WIDTH = width;
-    static inline constexpr int HEIGHT = height;
+    static constexpr std::size_t WIDTH = width;
+    static constexpr std::size_t HEIGHT = height;
 
 protected:
-    static inline const Console::RGB* const _SELECTED_CELL_COLOR = &Console::Color::YELLOW;
+    static constexpr const Console::RGB* SELECTED_CELL_COLOR = &Console::Color::YELLOW;
     const Console::RGB* _cellColor;
+
+private:
     const Console::RGB* _unselectedCellColor;
 
 public:
-    BaseCell() noexcept : BaseCell{nullptr}
-    {
-    }
-    
-    BaseCell(const Console::RGB* cellColor) noexcept : _unselectedCellColor{cellColor} 
+    explicit BaseCell(const Console::RGB* cellColor) noexcept : _unselectedCellColor{cellColor} 
     {
         SetSelection(false);
+    }
+
+    BaseCell() noexcept : BaseCell{nullptr}
+    {
     }
     
     virtual ~BaseCell() = default;
@@ -37,8 +39,8 @@ public:
 
     virtual void SetSelection(bool isSelected)
     {
-        _cellColor = isSelected ? _SELECTED_CELL_COLOR : _unselectedCellColor;
+        _cellColor = isSelected ? SELECTED_CELL_COLOR : _unselectedCellColor;
     }
 
-    virtual void DrawCell(int line) const = 0;
+    virtual void DrawCell(std::size_t line) const = 0;
 };

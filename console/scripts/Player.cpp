@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(std::weak_ptr<BaseChessboard> chessboard, bool isOnWhiteTeam) : _chessboard{chessboard} 
+Player::Player(std::shared_ptr<BaseChessboard> chessboard, bool isOnWhiteTeam) : _chessboard{chessboard} 
 {
     SetDefaultChessPiecesSetup(isOnWhiteTeam);
 }
@@ -11,53 +11,36 @@ void Player::ActivateSelection()
         return;
     
     _selectedPieceIndex = 0;
-    Utilits::GetSharedPtr(_chessboard)->SetSelectedCell(_chessPieces[_selectedPieceIndex]->GetPosition());
+    _chessboard->SetSelectedCell(_chessPieces[_selectedPieceIndex]->GetPosition());
 }
 
-void Player::GoToNextSelection(bool toGoForward)
+void Player::GoToNextSelection(Utilits::DeltaMove direction)
 {
-    int piecesCount = _chessPieces.size();
-
-    if(piecesCount <= 0)
+    if(_selectedPieceIndex < 0 || static_cast<std::size_t>(_selectedPieceIndex) >= _chessPieces.size())
         return;
 
-    int delta = toGoForward ? 1 : -1;
-    _selectedPieceIndex += delta;
-    if (_selectedPieceIndex == piecesCount)
-        _selectedPieceIndex = 0;
-    else if (_selectedPieceIndex < 0)
-        _selectedPieceIndex = piecesCount - 1;
-    Utilits::GetSharedPtr(_chessboard)->SetSelectedCell(_chessPieces[_selectedPieceIndex]->GetPosition());
-}
-
-bool Player::FixSelection()
-{
-    auto chessboard = Utilits::GetSharedPtr(_chessboard);
-    chessboard->CalculateAllowedMoves();
-    return chessboard->GetAllowedMovesCount() > 0;
-}
-
-void Player::UnfixSelection()
-{
-    Utilits::GetSharedPtr(_chessboard)->ClearAllowedMoves();
+    int nextIndex = Utilits::FindNextPositionIndex(_chessPieces, _chessPieces[_selectedPieceIndex]->GetPosition(), direction, 
+        _chessboard->CHESSBOARD_SIZE, [](const auto& piece){
+            return piece->GetPosition();
+    });
+        
+    if (nextIndex >= 0)
+    {
+        _selectedPieceIndex = nextIndex;
+        _chessboard->SetSelectedCell(_chessPieces[_selectedPieceIndex]->GetPosition());   
+    }
 }
 
 void Player::DeactivateSelection()
 {
     _selectedPieceIndex = -1;
-    Utilits::GetSharedPtr(_chessboard)->SetSelectedCell(Vector2{-1, -1});
-}
-
-void Player::GoToNextPathForMove(BaseChessboard::DeltaMove direction)
-{
-    Utilits::GetSharedPtr(_chessboard)->SetNextMarkedCell(direction);
+    _chessboard->SetSelectedCell(Vector2{-1, -1});
 }
 
 void Player::SetDefaultChessPiecesSetup(bool isOnWhiteTeam)
 {
-    auto realChessboard = Utilits::GetSharedPtr(_chessboard);
     int rowOffset, offsetCoeff;
-    int chessBoardSize = realChessboard->GetChessboardSize();
+    int chessBoardSize = _chessboard->GetChessboardSize();
     if (isOnWhiteTeam)
     {
         rowOffset = chessBoardSize - 1;
@@ -82,7 +65,7 @@ void Player::SetDefaultChessPiecesSetup(bool isOnWhiteTeam)
     for (int i = 0; i < chessBoardSize; ++i)
     {
         piecePosition.col = i;
-        realChessboard->SetPieceOnCell(_chessPieces[i], piecePosition);
+        _chessboard->SetPieceOnCell(_chessPieces[i], piecePosition);
     }
     
     piecePosition.row += offsetCoeff;
@@ -90,6 +73,6 @@ void Player::SetDefaultChessPiecesSetup(bool isOnWhiteTeam)
     {
         piecePosition.col = i - 8;
         _chessPieces[i] = ChessPiece::InitializeSharedChessPiece<Queen>(isOnWhiteTeam);
-        realChessboard->SetPieceOnCell(_chessPieces[i], piecePosition);
+        _chessboard->SetPieceOnCell(_chessPieces[i], piecePosition);
     }
 }

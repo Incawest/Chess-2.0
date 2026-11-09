@@ -50,7 +50,7 @@ void GameManagement::PickUpInput()
 		{
 			if (_currentGameState == GameState::PIECE_SELECTION)
 			{
-				if (_activePlayer->FixSelection())
+				if (_chessboard->CalculateAllowedMoves())
 					_currentGameState = GameState::PATH_SELECTION;
 			}
 		}
@@ -59,7 +59,7 @@ void GameManagement::PickUpInput()
 			if (_currentGameState == GameState::PATH_SELECTION)
 			{
 				_currentGameState = GameState::PIECE_SELECTION;
-				_activePlayer->UnfixSelection();
+				_chessboard->ClearAllowedMoves();
 			}
 			else
 				_currentGameState = GameState::OFF;
@@ -71,28 +71,31 @@ void GameManagement::PickUpInput()
 				Console::RefreshConsole();
 			else if (inputCode == 72)
 			{
-				if (_currentGameState == GameState::PATH_SELECTION)
-					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::UP);
+				if (_currentGameState == GameState::PIECE_SELECTION)
+					_activePlayer->GoToNextSelection(Utilits::DeltaMove::UP);
+				else if (_currentGameState == GameState::PATH_SELECTION)
+					_chessboard->SetNextMarkedCell(Utilits::DeltaMove::UP);
 			}
 			else if(inputCode == 75)
 			{
 				if (_currentGameState == GameState::PIECE_SELECTION)
-					_activePlayer->GoToNextSelection(false);
+					_activePlayer->GoToNextSelection(Utilits::DeltaMove::LEFT);
 				else if (_currentGameState == GameState::PATH_SELECTION)
-					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::LEFT);
-					
+					_chessboard->SetNextMarkedCell(Utilits::DeltaMove::LEFT);
 			}
 			else if(inputCode == 77)
 			{
 				if (_currentGameState == GameState::PIECE_SELECTION)
-					_activePlayer->GoToNextSelection(true);
+					_activePlayer->GoToNextSelection(Utilits::DeltaMove::RIGHT);
 				else if (_currentGameState == GameState::PATH_SELECTION)
-					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::RIGHT);
+					_chessboard->SetNextMarkedCell(Utilits::DeltaMove::RIGHT);
 			}
 			else if (inputCode == 80)
 			{
+				if (_currentGameState == GameState::PIECE_SELECTION)
+					_activePlayer->GoToNextSelection(Utilits::DeltaMove::DOWN);
 				if (_currentGameState == GameState::PATH_SELECTION)
-					_activePlayer->GoToNextPathForMove(BaseChessboard::DeltaMove::DOWN);
+					_chessboard->SetNextMarkedCell(Utilits::DeltaMove::DOWN);
 			}
 		}
 	}
