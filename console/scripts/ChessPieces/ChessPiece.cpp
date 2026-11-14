@@ -84,11 +84,11 @@ void ChessPiece::SetPosition(Vector2 position) noexcept
 
 void ChessPiece::AddPiece(Line& line) const
 {
-    bool isSuccess = line.TrySetTextColor(_pieceColor);
+    bool isSuccess = line.TrySetActiveColor(Line::ColorTarget::TEXT, _pieceColor);
     line += _character;
 
     if (isSuccess)
-        line.SetTextColorToDefault();
+        line.SetActiveColorToDefault(Line::ColorTarget::TEXT);
 }
 
 void ChessPiece::Update()

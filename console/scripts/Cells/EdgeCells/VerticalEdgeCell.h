@@ -33,7 +33,7 @@ public:
 
     TextBlock BuildTextBlock(const RGB* textColor, const RGB* bgColor) const override
     {
-        TextBlock textBlock{HEIGHT, textColor, bgColor, true};
+        TextBlock textBlock{HEIGHT, WIDTH, textColor, bgColor, true};
 
         for (std::size_t i = 0; i < HEIGHT; ++i)
         {

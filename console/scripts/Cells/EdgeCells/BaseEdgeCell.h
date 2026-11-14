@@ -32,29 +32,29 @@ protected:
         std::size_t rightPadding = 0
     ) const
     {
-        processingLine.ResetBGColor();
+        processingLine.ResetActiveColor(Line::ColorTarget::BACKGROUND);
         processingLine.AddChars(leftPadding);
 
         if (!outsideLine.empty())
         {
-            bool isSuccess = processingLine.TrySetTextColor(this->_cellColor);
+            bool isSuccess = processingLine.TrySetActiveColor(Line::ColorTarget::TEXT, this->_cellColor);
             processingLine += outsideLine;
             if (isSuccess)
-                processingLine.SetTextColorToDefault();
+                processingLine.SetActiveColorToDefault(Line::ColorTarget::TEXT);
         }
 
         processingLine.AddChars(rightPadding);
-        processingLine.SetBGColorToDefault();
+        processingLine.SetActiveColorToDefault(Line::ColorTarget::BACKGROUND);
     }
 
     void AddEdgeChars(Line& line, std::size_t charsCount) const
     {
-        bool isSuccess = line.TrySetTextColor(this->_cellColor);
+        bool isSuccess = line.TrySetActiveColor(Line::ColorTarget::TEXT, this->_cellColor);
 
         for (std::size_t i = 0; i < charsCount; ++i)
             line += EDGE_CHAR;
 
         if (isSuccess)
-            line.SetTextColorToDefault();
+            line.SetActiveColorToDefault(Line::ColorTarget::TEXT);
     }
 };

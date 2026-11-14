@@ -133,7 +133,8 @@ void BaseChessboard::ClearAllowedMoves()
 TextBlock BaseChessboard::BuildTextBlock(const TextBlock::RGB* textColor, const TextBlock::RGB* bgColor) const
 {
 	TextBlock boardTextBlock{
-		CHESSBOARD_SIZE * CellsConfiguration::BASE_HEIGHT + 2 * CellsConfiguration::HORIZONTAL_EDGE_HEIGHT, 
+		2 * CellsConfiguration::HORIZONTAL_EDGE_HEIGHT + CHESSBOARD_SIZE * CellsConfiguration::BASE_HEIGHT, 
+		2 * CellsConfiguration::VERTICAL_EDGE_WIDTH + CHESSBOARD_SIZE * CellsConfiguration::BASE_WIDTH,
 		_chessboardTextColor, 
 		_chessboardBGColor,
 		false
@@ -235,7 +236,6 @@ void BaseChessboard::SetMarkAlongEntireVectorOfMarkedCells(bool isMarked)
 	for (const Vector2& el : _positionsOfMarkedCells)
 		_cells[CalculateCellIndex(el)].SetMark(isMarked);
 
-	Vector2 piecePosition = CalculateCellPosition(_selectedCellIndex);
 	int nearestMarkedIndex = Utilits::FindNextPositionIndex(
 		_positionsOfMarkedCells, 
 		CalculateCellPosition(_selectedCellIndex), 
@@ -298,7 +298,12 @@ TextBlock BaseChessboard::BuildHorizontalEdge(bool isTopEdge) const
 		connectors = &_edges.bottomEdgeConnectors;
 	}
 
-	TextBlock textBlock{CellsConfiguration::HORIZONTAL_EDGE_HEIGHT, _chessboardTextColor, _chessboardBGColor, true};
+	TextBlock textBlock{
+		CellsConfiguration::HORIZONTAL_EDGE_HEIGHT, 
+		2 * CellsConfiguration::VERTICAL_EDGE_WIDTH + CHESSBOARD_SIZE * CellsConfiguration::BASE_WIDTH,  
+		_chessboardTextColor, 
+		_chessboardBGColor, 
+		true};
 
 	textBlock.MergeWithTextBlock(leftCorner->BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
 	for (std::size_t j = 0; j < CHESSBOARD_SIZE; ++j)

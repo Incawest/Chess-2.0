@@ -1,69 +1,49 @@
 #include "TextBlock.h"
 
-bool TextBlock::Line::TrySetTextColor(const RGB* textColor)
+bool TextBlock::Line::TrySetActiveColor(ColorTarget target, const RGB* activeColor)
 {
-    if (textColor != nullptr && textColor != _currentTextColor)
+    return GetColorHandler(target).TrySetActiveColor(*this, activeColor);
+}
+
+void TextBlock::Line::SetActiveColorToDefault(ColorTarget target)
+{
+    GetColorHandler(target).SetActiveColorToDefault(*this);
+}
+
+void TextBlock::Line::ResetActiveColor(ColorTarget target)
+{
+    GetColorHandler(target).ResetActiveColor(*this);
+}
+
+void TextBlock::Line::ColorHandler::SetActiveColorToDefault(Line& handlingLine)
+{
+    if (_defaultColor != nullptr)
+        TrySetActiveColor(handlingLine, _defaultColor);
+    else
+        ResetActiveColor(handlingLine);
+}
+
+bool  TextBlock::Line::ColorHandler::TrySetActiveColor(Line& handlingLine, const RGB* activeColor)
+{
+    if (activeColor != nullptr && activeColor != _activeColor)
     {
-        _currentTextColor = textColor;
+        _activeColor = activeColor;
 
         std::wostringstream wstrStream{std::ios_base::openmode::_S_out | std::ios_base::openmode::_S_app};
         wstrStream
-                << L"\x1b[38;2;"
-                << _currentTextColor->r << L';'
-                << _currentTextColor->g << L';'
-                << _currentTextColor->b << L'm';
-        *this += wstrStream.str();
+            << L"\x1b" << _setColorCommand
+            << _activeColor->r << L';'
+            << _activeColor->g << L';'
+            << _activeColor->b << L'm';
+        handlingLine += wstrStream.str();
         return true;
     }
     else
         return false;
 }
 
-bool TextBlock::Line::TrySetBGColor(const RGB* bgColor)
+void  TextBlock::Line::ColorHandler::ResetActiveColor(Line& handlingLine)
 {
-    if (bgColor != nullptr && bgColor != _currentBGColor)
-    {
-        _currentBGColor = bgColor;
-
-        std::wostringstream wstrStream{std::ios_base::openmode::_S_out | std::ios_base::openmode::_S_app};
-        wstrStream
-            << L"\x1b[48;2;"
-            << _currentBGColor->r << L';'
-            << _currentBGColor->g << L';'
-            << _currentBGColor->b << L'm';
-        *this += wstrStream.str();
-        return true;
-    }
-    else
-        return false;
-}
-
-void TextBlock::Line::SetTextColorToDefault()
-{
-    if (_defaultTextColor != nullptr)
-        TrySetTextColor(_defaultTextColor);
-    else
-        ResetTextColor();
-}
-
-
-void TextBlock::Line::SetBGColorToDefault()
-{
-    if (_defaultBGColor != nullptr)
-        TrySetBGColor(_defaultBGColor);
-    else
-        ResetBGColor();
-}
-
-
-void TextBlock::Line::ResetTextColor()
-{
-    *this += L"\033[39m";
-    _currentTextColor = nullptr;
-}
-
-void TextBlock::Line::ResetBGColor()
-{
-    *this += L"\033[49m";
-    _currentBGColor = nullptr;
+    handlingLine += L"\033" + _resetColorCommand;
+    _activeColor = nullptr;
 }

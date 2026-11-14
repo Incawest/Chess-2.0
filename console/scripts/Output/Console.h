@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <ranges>
 #include <span>
 #include <stdexcept>
 #include <system_error>
@@ -49,6 +50,9 @@ public:
 
     static void DrawTextBlocks(std::span<const TextBlock> squaredFilledTextBlocks)
     {
+        auto notEmptyTextBlocks = squaredFilledTextBlocks | std::views::filter([](const TextBlock& value){
+            return value.GetLinesCount() > 0; 
+        });
         std::wstring result;
 
         result += GetInOneLine(squaredFilledTextBlocks);
@@ -72,46 +76,38 @@ public:
     }
 
 private:
-    static std::wstring GetInOneLine( std::span<const TextBlock> squaredFilledTextBlocks)
+    static std::wstring GetInOneLine(std::ranges::forward_range auto&& notEmptyTextBlocks)
     {
         static TextBlock::Line resetLine = [](){
             TextBlock::Line rl;
-            rl.ResetTextColor();
-            rl.ResetBGColor();
+            rl.ResetActiveColor(TextBlock::Line::ColorTarget::TEXT);
+            rl.ResetActiveColor(TextBlock::Line::ColorTarget::BACKGROUND);
             return rl;
         }();
         static std::wstring_view resetColors = resetLine;
 
         std::size_t height = 0;
         std::size_t commonWidth = 0;
-        std::size_t visibleTextBlocks = 0;
-        for (const TextBlock& textBlock : squaredFilledTextBlocks)
+        std::size_t textBlocksCount = 0;
+
+        for (const TextBlock& textBlock : notEmptyTextBlocks)
         {
-            std::size_t linesCount = textBlock.GetLinesCount();
-
-            if (linesCount == 0)
-                continue;
-
-            height = std::max(height, linesCount);
+            height = std::max(height, textBlock.GetLinesCount());
             commonWidth += textBlock.gapBefore + textBlock[0].GetWidth();
-            ++visibleTextBlocks;
+            ++textBlocksCount;
         }
-
-        ++commonWidth;
-
-        std::size_t textBlocksCount = squaredFilledTextBlocks.size();
-
         std::wstring result;
-        result.reserve(height * commonWidth + (visibleTextBlocks * height + 1) * resetColors.size());
-
+        result.reserve(height * commonWidth + height - 1 + (textBlocksCount * height + 1) * resetColors.size()); //must be dynamic
         result.append(resetColors);
+
+        auto firstIt = notEmptyTextBlocks.begin();
         for (std::size_t y = 0; y < height; ++y)
         {
             if (y > 0)
                 result += L'\n';
             for (std::size_t i = 0; i < textBlocksCount; ++i)
             {
-                const TextBlock& textBlock = squaredFilledTextBlocks[i];    
+                const TextBlock& textBlock = *(firstIt + i);    
                 std::size_t linesCount = textBlock.GetLinesCount();
                 if (linesCount == 0)
                     continue;
