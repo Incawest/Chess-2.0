@@ -3,20 +3,21 @@
 #include <iostream>
 
 #include "BaseCell.h"
-#include "Console.h"
 #include "Utilits.h"
-
-using Color = Console::Color;
-using RGB = Console::RGB;
 
 template<std::size_t width, std::size_t height>
 requires(width >= 1 && height >= 1)
 class BaseEdgeCell : public BaseCell<width, height>
 {
 protected:
+    using BaseCell = BaseCell<width, height>;
+    using RGB = typename BaseCell::RGB;
+    using Color = typename BaseCell::Color;
+    using Line = typename BaseCell::Line;
+protected:
     const wchar_t EDGE_CHAR;
 public:
-    BaseEdgeCell(wchar_t edgeChar, const RGB* cellColor) :  BaseCell<width, height>{cellColor}, EDGE_CHAR{edgeChar}
+    BaseEdgeCell(wchar_t edgeChar, const RGB* cellColor) :  BaseCell{cellColor}, EDGE_CHAR{edgeChar}
     {
     }
 
@@ -24,33 +25,36 @@ public:
     {
     }
 protected:
-    void DrawOutsideLine(std::wstring_view line, std::size_t leftPadding, std::size_t rightPadding = 0) const
+    void AddOutsideLine(
+        Line& processingLine, 
+        std::wstring_view outsideLine, 
+        std::size_t leftPadding = 0, 
+        std::size_t rightPadding = 0
+    ) const
     {
-        const RGB* previousBGColor = Console::GetBGColor();
-        Console::ResetBGColor();
-        Utilits::DrawEmptyLine(leftPadding);
+        processingLine.ResetBGColor();
+        processingLine.AddChars(leftPadding);
 
-        if (!line.empty())
+        if (!outsideLine.empty())
         {
-            const RGB* previousTextColor = Console::GetTextColor();
-            Console::SetTextColor(this->_cellColor);
-            std::wcout << line;
-            Console::SetTextColor(previousTextColor);
+            bool isSuccess = processingLine.TrySetTextColor(this->_cellColor);
+            processingLine += outsideLine;
+            if (isSuccess)
+                processingLine.SetTextColorToDefault();
         }
 
-        Utilits::DrawEmptyLine(rightPadding);
-        Console::SetBGColor(previousBGColor);
+        processingLine.AddChars(rightPadding);
+        processingLine.SetBGColorToDefault();
     }
 
-    void DrawEdgeChars(std::size_t count) const
+    void AddEdgeChars(Line& line, std::size_t charsCount) const
     {
-        const RGB* previousColor = Console::GetTextColor();
-        Console::SetTextColor(this->_cellColor);
+        bool isSuccess = line.TrySetTextColor(this->_cellColor);
 
-        for (std::size_t i = 0; i < count; ++i)
-            std::wcout << EDGE_CHAR;
+        for (std::size_t i = 0; i < charsCount; ++i)
+            line += EDGE_CHAR;
 
-        Console::SetTextColor(previousColor);
+        if (isSuccess)
+            line.SetTextColorToDefault();
     }
-
 };

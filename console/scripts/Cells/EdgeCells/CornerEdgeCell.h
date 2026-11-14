@@ -28,22 +28,29 @@ public:
     {
     }
 
-    void DrawCell(std::size_t line) const override
+    TextBlock BuildTextBlock(const RGB* textColor, const RGB* bgColor) const override
     {
-        if (line == FILLED_LINE)
+        TextBlock textBlock{HEIGHT, textColor, bgColor, true};
+
+        for (std::size_t i = 0; i < HEIGHT; ++i)
         {
-            if (CORNER_TYPE == Type::TOP_LEFT || CORNER_TYPE == Type::BOTTOM_LEFT)
+            if (i == FILLED_LINE)
             {
-                DrawOutsideLine({}, LAST_COL);
-                DrawEdgeChars(1);
+                if (CORNER_TYPE == Type::TOP_LEFT || CORNER_TYPE == Type::BOTTOM_LEFT)
+                {
+                    AddOutsideLine(textBlock[i], {}, LAST_COL);
+                    AddEdgeChars(textBlock[i], 1);     
+                }
+                else
+                {
+                    AddEdgeChars(textBlock[i], 1);
+                    AddOutsideLine(textBlock[i], {}, LAST_COL);
+                }
             }
             else
-            {
-                DrawEdgeChars(1);
-                DrawOutsideLine({}, LAST_COL);
-            }
+                AddOutsideLine(textBlock[i], {}, WIDTH);
         }
-        else
-            DrawOutsideLine({}, WIDTH);
+
+        return textBlock;
     }
 };

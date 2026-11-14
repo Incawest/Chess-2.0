@@ -6,15 +6,6 @@ GameManagement& GameManagement::GetGameManagement() noexcept
 	return gameManagement;	
 }
 
-void GameManagement::SetGUIConfines(int rowCnt, int colCnt)
-{
-	_minRowCnt = rowCnt;
-	_minColCnt = colCnt + 1;
-}
-
-GameManagement::GameManagement() = default;
-GameManagement::~GameManagement() = default;
-
 void GameManagement::StartGame()
 {
 	_chessboard = std::make_shared<BaseChessboard>(8);
@@ -24,18 +15,34 @@ void GameManagement::StartGame()
 	_activePlayer->ActivateSelection();
 }
 
+Vector2 GameManagement::GetSizeOfActiveBlocks() const noexcept
+{
+	Vector2 sizeOfActiveBlocks{0, 0};
+	sizeOfActiveBlocks += _chessboard->GetSizeInChars();
+	return sizeOfActiveBlocks;
+}
+
+std::vector<TextBlock> GameManagement::GetActiveBlocks() const
+{
+	std::vector<TextBlock> textBlocks;
+	textBlocks.reserve(1);
+	textBlocks.emplace_back(_chessboard->BuildTextBlock({}, {}));
+	return textBlocks;
+}
+
 void GameManagement::Update()
 {
 	while (_currentGameState != GameState::OFF)
 	{
+		Blinkable::UpdateAll();
+
 		Console::ResetCaret();
-		if (Console::IsThisFitInConsole(_minRowCnt, _minColCnt))
-		{
-			Blinkable::UpdateAll();
-			_chessboard->Update();
-		}
+		if(Console::DoesThisFitInConsole(GetSizeOfActiveBlocks()))
+			Console::DrawTextBlocks(GetActiveBlocks());
 		else
-			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
+			Console::DrawWstring(L"Not enough space for GUI");
+
+		Console::RefreshConsoleAfterCaret();
 
 		PickUpInput();
 	}

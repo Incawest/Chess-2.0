@@ -33,15 +33,12 @@ ChessPiece::ChessPiece([[maybe_unused]] const ChessPiece::Key& constructorKey, w
     _pathsForMoves.resize(pathsForMovesCount);
 }
 
-ChessPiece::~ChessPiece() = default;
-
-
 bool ChessPiece::GetIsWhite() const noexcept
 {
     return _isWhite;
 }
 
-const RGB* ChessPiece::GetColor() const noexcept
+const TextBlock::RGB* ChessPiece::GetColor() const noexcept
 {
     return _pieceColor;
 }
@@ -85,12 +82,13 @@ void ChessPiece::SetPosition(Vector2 position) noexcept
     _position = position;
 }
 
-void ChessPiece::DrawPiece() const
+void ChessPiece::AddPiece(Line& line) const
 {
-    auto pastTextColor = Console::GetTextColor();
-    Console::SetTextColor(_pieceColor);
-    std::wcout << _character;
-    Console::SetTextColor(pastTextColor);
+    bool isSuccess = line.TrySetTextColor(_pieceColor);
+    line += _character;
+
+    if (isSuccess)
+        line.SetTextColorToDefault();
 }
 
 void ChessPiece::Update()

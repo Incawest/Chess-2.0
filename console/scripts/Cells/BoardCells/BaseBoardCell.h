@@ -10,14 +10,10 @@
 #include "ChessPiece.h"
 #include "Console.h"
 
-using Color = Console::Color;
-using RGB = Console::RGB;
-
 class BaseBoardCell : 
     public BaseCell<CellsConfiguration::BASE_WIDTH, CellsConfiguration::BASE_HEIGHT>, public Blinkable
 {
 private:
-
     struct CellboardParts final
     {
         static inline constexpr wchar_t HORIZONTAL_BORDER = L'\u2500';
@@ -31,6 +27,7 @@ private:
     };
 
 private:
+
     static inline constexpr std::size_t LAST_LINE = HEIGHT - 1;
     static inline constexpr std::size_t HORIZONTAL_WIDTH = WIDTH - 2;
     static inline constexpr wchar_t CHARACTER_MARK = L'*';
@@ -47,7 +44,8 @@ public:
     void SetSelection(bool isSelected) override;
     void SetMark(bool isMakred);
     void SetPieceOnCell(std::weak_ptr<ChessPiece> piece) noexcept;
-    void DrawCell(std::size_t line) const override;
+
+    TextBlock BuildTextBlock(const RGB* textColor, const RGB* bgColor) const override;
 
     void Update() override;
 };

@@ -7,6 +7,7 @@
 #include "Console.h"
 #include "IUpdatable.h"
 #include "Player.h"
+#include "TextBlock.h"
 
 class GameManagement : public IUpdatable
 {
@@ -20,26 +21,29 @@ public:
     };
 private:
     GameState _currentGameState = GameState::PIECE_SELECTION;
-    static inline int _minRowCnt = 28;
-    static inline int _minColCnt = 55;
 
     std::shared_ptr<BaseChessboard> _chessboard;
+    //std::vector<ITextBlockManager> _activeBlocks; ???
 
     std::unique_ptr<Player> _activePlayer;
     std::unique_ptr<Player> _inactivePlayer;
 public:
     static GameManagement& GetGameManagement() noexcept;
-    static void SetGUIConfines(int rowCnt, int colCnt);
 
     GameManagement(const GameManagement& other) = delete;
+    GameManagement(GameManagement&& other) = delete;
     GameManagement& operator=(const GameManagement& other) = delete;
+    GameManagement& operator=(GameManagement&& other) = delete;
 
     void StartGame();
+
+    Vector2 GetSizeOfActiveBlocks() const noexcept;
+    std::vector<TextBlock> GetActiveBlocks() const;
 	void Update() override;
 
 private:
-    GameManagement();
-    ~GameManagement();
+    GameManagement() noexcept = default;
+    ~GameManagement() noexcept = default;
     
     void PickUpInput();
 };

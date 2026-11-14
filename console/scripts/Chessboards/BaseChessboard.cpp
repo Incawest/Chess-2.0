@@ -10,7 +10,15 @@ BaseChessboard::BaseChessboard(std::size_t chessboardSize): BaseChessboard{chess
 }
 
 BaseChessboard::BaseChessboard(std::size_t chessboardSize, Corners corners) :
-	CHESSBOARD_SIZE{chessboardSize}, CHESSBOARD_SQUARE{CHESSBOARD_SIZE * CHESSBOARD_SIZE}, _edges{.corners = std::move(corners)}
+	CHESSBOARD_SIZE{chessboardSize}, 
+	CHESSBOARD_SQUARE{CHESSBOARD_SIZE * CHESSBOARD_SIZE},
+	CHESSBOARD_SIZE_IN_CHARS{
+		static_cast<int>(2 * CellsConfiguration::HORIZONTAL_EDGE_HEIGHT + CHESSBOARD_SIZE * CellsConfiguration::BASE_HEIGHT),
+		static_cast<int>(2 * CellsConfiguration::VERTICAL_EDGE_WIDTH + 
+			CHESSBOARD_SIZE * CellsConfiguration::BASE_WIDTH + 
+			(CHESSBOARD_SIZE + 1) * CellsConfiguration::SPACE_BETWEEN_CELLS)
+	}, 
+	_edges{.corners = std::move(corners)}
 {
 	BuildChessboard();
 }
@@ -60,6 +68,11 @@ void BaseChessboard::SetNextMarkedCell(Utilits::DeltaMove direction)
 		_selectedMarkedCellIndex = nextGlobalIndex;
 		SetCellSelection(_selectedMarkedCellIndex, true);
 	}
+}
+
+Vector2 BaseChessboard::GetSizeInChars() const noexcept
+{
+	return CHESSBOARD_SIZE_IN_CHARS;
 }
 
 bool BaseChessboard::CalculateAllowedMoves()
@@ -117,9 +130,48 @@ void BaseChessboard::ClearAllowedMoves()
 	_positionsOfMarkedCells.clear();
 }
 
-void BaseChessboard::Update()
+TextBlock BaseChessboard::BuildTextBlock(const TextBlock::RGB* textColor, const TextBlock::RGB* bgColor) const
 {
-	DrawChessboard();
+	TextBlock boardTextBlock{
+		CHESSBOARD_SIZE * CellsConfiguration::BASE_HEIGHT + 2 * CellsConfiguration::HORIZONTAL_EDGE_HEIGHT, 
+		_chessboardTextColor, 
+		_chessboardBGColor,
+		false
+	};
+
+	boardTextBlock.MergeWithTextBlock(BuildHorizontalEdge(true));
+
+	for (std::size_t i = 0; i < CHESSBOARD_SIZE; ++i)
+	{
+		std::size_t startIndexForSubTextBlock = CellsConfiguration::HORIZONTAL_EDGE_HEIGHT + i * CellsConfiguration::BASE_HEIGHT;
+		boardTextBlock.MergeWithTextBlock(
+				_edges.leftVerticalEdge[i].BuildTextBlock(_chessboardTextColor, _chessboardBGColor),
+				startIndexForSubTextBlock
+			);
+		
+		std::size_t rowOffset = i * CHESSBOARD_SIZE;
+		for (std::size_t j = 0; j < CHESSBOARD_SIZE; ++j)
+			{
+				boardTextBlock.AddCharsForSeveralLines(startIndexForSubTextBlock, CellsConfiguration::BASE_HEIGHT);
+				boardTextBlock.MergeWithTextBlock(
+					_cells[rowOffset + j].BuildTextBlock(_chessboardTextColor, _chessboardBGColor),
+					startIndexForSubTextBlock
+				);
+			}
+
+		boardTextBlock.AddCharsForSeveralLines(startIndexForSubTextBlock, CellsConfiguration::BASE_HEIGHT);
+		boardTextBlock.MergeWithTextBlock(
+				_edges.rightVerticalEdge[i].BuildTextBlock(_chessboardTextColor, _chessboardBGColor),
+				startIndexForSubTextBlock
+			);
+	}
+	
+	boardTextBlock.MergeWithTextBlock(
+		BuildHorizontalEdge(false), 
+	CellsConfiguration::HORIZONTAL_EDGE_HEIGHT + CHESSBOARD_SIZE * CellsConfiguration::BASE_HEIGHT
+	);
+
+	return boardTextBlock;
 }
 
 void BaseChessboard::BuildChessboard()
@@ -224,52 +276,38 @@ void BaseChessboard::SortPositionsOfMarkedCells()
 	});
 }
 
-void BaseChessboard::DrawEdge(const CornerEdgeCell* leftCorner, 
-    const std::vector<HorizontalEdgeCell>& edge, 
-    const CornerEdgeCell* rightCorner,
-    const std::vector<EdgeConnector>& connectors) const
+TextBlock BaseChessboard::BuildHorizontalEdge(bool isTopEdge) const
 {
-    for (std::size_t line = 0; line < CornerEdgeCell::HEIGHT; ++line)
-    {
-        leftCorner->DrawCell(line);
-        for (std::size_t cellInLine = 0; cellInLine < CHESSBOARD_SIZE; ++cellInLine)
-        {
-            connectors[cellInLine].DrawCell(line);
-            edge[cellInLine].DrawCell(line);
-        }
-        connectors[CHESSBOARD_SIZE].DrawCell(line);
-        rightCorner->DrawCell(line);
-        std::wcout << std::endl;
-    }
-}
+	const CornerEdgeCell* leftCorner;
+	const CornerEdgeCell* rightCorner;
+	const std::vector<HorizontalEdgeCell>* horizontalEdge;
+	const std::vector<EdgeConnector>* connectors;
 
-void BaseChessboard::DrawChessboard() const
-{
-	Console::SetTextColor(&Color::WHITE);
-	Console::SetBGColor(&Color::GRAY);
-	
-	DrawEdge(&_edges.corners[0], _edges.topHorizontalEdge, &_edges.corners[1], _edges.topEdgeConnectors);
-
-	for (std::size_t cellRow = 0; cellRow < CHESSBOARD_SIZE; ++cellRow)
+	if(isTopEdge)
 	{
-		std::size_t rowOffset = cellRow * CHESSBOARD_SIZE;
-		for (std::size_t line = 0; line < BaseBoardCell::HEIGHT; ++line)
-		{
-			_edges.leftVerticalEdge[cellRow].DrawCell(line);
-
-			for (std::size_t cellInRow = 0; cellInRow < CHESSBOARD_SIZE; ++cellInRow)
-			{
-				Utilits::DrawEmptyLine(CellsConfiguration::SPACE_BETWEEN_CELLS);
-				_cells[rowOffset + cellInRow].DrawCell(line);
-			}
-
-			Utilits::DrawEmptyLine(CellsConfiguration::SPACE_BETWEEN_CELLS);
-			_edges.rightVerticalEdge[cellRow].DrawCell(line);
-			std::wcout << std::endl;
-		}
+		leftCorner = &_edges.corners[0];
+		rightCorner = &_edges.corners[1];
+		horizontalEdge = &_edges.topHorizontalEdge;
+		connectors = &_edges.topEdgeConnectors;
 	}
-	
-	DrawEdge(&_edges.corners[2], _edges.bottomHorizontalEdge, &_edges.corners[3], _edges.bottomEdgeConnectors);
+	else
+	{
+		leftCorner = &_edges.corners[2];
+		rightCorner = &_edges.corners[3];
+		horizontalEdge = &_edges.bottomHorizontalEdge;
+		connectors = &_edges.bottomEdgeConnectors;
+	}
 
-	Console::ResetConsoleColor();
+	TextBlock textBlock{CellsConfiguration::HORIZONTAL_EDGE_HEIGHT, _chessboardTextColor, _chessboardBGColor, true};
+
+	textBlock.MergeWithTextBlock(leftCorner->BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
+	for (std::size_t j = 0; j < CHESSBOARD_SIZE; ++j)
+	{
+		textBlock.MergeWithTextBlock((*connectors)[j].BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
+		textBlock.MergeWithTextBlock((*horizontalEdge)[j].BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
+	}
+	textBlock.MergeWithTextBlock((*connectors)[CHESSBOARD_SIZE].BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
+	textBlock.MergeWithTextBlock(rightCorner->BuildTextBlock(_chessboardTextColor, _chessboardBGColor));
+
+	return textBlock;
 }

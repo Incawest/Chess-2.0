@@ -29,13 +29,20 @@ public:
     {
     }
 
-    void DrawCell(std::size_t line) const override
+    TextBlock BuildTextBlock(const RGB* textColor, const RGB* bgColor) const override
     {
-        if (line == FILLED_LINE)
-            DrawEdgeChars(WIDTH);
-        else if (line == MARKED_LINE)
-            DrawOutsideLine(std::wstring_view(&MARKED_LETTER, 1), HALF_WIDTH, HALF_WIDTH);
-        else
-            DrawOutsideLine({}, WIDTH);
+        TextBlock textBlock{HEIGHT, textColor, bgColor, true};
+
+        for (std::size_t i = 0; i < HEIGHT; ++i)
+        {
+            if (i == FILLED_LINE)
+                AddEdgeChars(textBlock[i], WIDTH);
+            else if (i == MARKED_LINE)
+                AddOutsideLine(textBlock[i], std::wstring_view(&MARKED_LETTER, 1), HALF_WIDTH, HALF_WIDTH);
+            else
+                AddOutsideLine(textBlock[i], {}, WIDTH);
+        }
+
+        return textBlock;
     }
 };

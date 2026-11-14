@@ -41,52 +41,62 @@ void BaseBoardCell::SetPieceOnCell(std::weak_ptr<ChessPiece> piece) noexcept
     _piece = piece;
 }
 
-void BaseBoardCell::DrawCell(std::size_t line) const
+TextBlock BaseBoardCell::BuildTextBlock(const RGB* textColor, const RGB* bgColor) const
 {
-    const RGB* pastTextColor = Console::GetTextColor();
-    Console::SetTextColor(_cellColor);
-
-    if (line == 0)
-    {
-        std::wcout << CellboardParts::TOP_LEFT_CORNER;
-        std::wcout << std::wstring(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
-        std::wcout << CellboardParts::TOP_RIGHT_CORNER;
-    }
+    TextBlock textBlock{HEIGHT, textColor, bgColor, true};
     
-    else if (line == LAST_LINE)
+    for (std::size_t i = 0; i < HEIGHT; ++i)
     {
-        std::wcout << CellboardParts::BOTTOM_LEFT_CORNER;
-        std::wcout << std::wstring(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
-        std::wcout << CellboardParts::BOTTOM_RIGHT_CORNER;
-    }
-    else
-    {
-        std::wcout << CellboardParts::VERTICAL_BORDER << L' ';
-        
-        auto piece = _piece.lock();
-        if (piece != nullptr) 
+        auto& curLine = textBlock[i];
+        bool isSuccess = curLine.TrySetTextColor(_cellColor);
+
+        if (i == 0)
         {
-            piece->DrawPiece();
+            curLine += CellboardParts::TOP_LEFT_CORNER;
+            curLine.AddChars(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
+            curLine += CellboardParts::TOP_RIGHT_CORNER;
         }
-        else if (_isMarked)
+        else if (i == LAST_LINE)
         {
-            if (_isSelected)
-            {
-                const RGB* curCellColor = Console::GetTextColor();
-                Console::SetTextColor(SELECTED_CELL_COLOR);  
-                std::wcout << CHARACTER_MARK;
-                Console::SetTextColor(curCellColor);
-            }
-            else
-                std::wcout << CHARACTER_MARK;
+            curLine += CellboardParts::BOTTOM_LEFT_CORNER;
+            curLine.AddChars(HORIZONTAL_WIDTH, CellboardParts::HORIZONTAL_BORDER);
+            curLine += CellboardParts::BOTTOM_RIGHT_CORNER;
         }
         else
-            std::wcout << L' ';
+        {
+            curLine += CellboardParts::VERTICAL_BORDER;
+            curLine += L' ';
+            
+            auto piece = _piece.lock();
+            if (piece != nullptr) 
+            {
+                piece->AddPiece(curLine);
+            }
+            else if (_isMarked)
+            {
+                if (_isSelected)
+                {
+                    auto curCellColor = curLine.GetTextColor();
+                    bool isSuccessOfMark = curLine.TrySetTextColor(SELECTED_CELL_COLOR);  
+                    curLine += CHARACTER_MARK;
 
-        std::wcout << L' ' << CellboardParts::VERTICAL_BORDER;
+                    if(isSuccessOfMark)
+                        curLine.TrySetTextColor(curCellColor);
+                }
+                else
+                    curLine += CHARACTER_MARK;
+            }
+            else
+                curLine += L' ';
+
+            curLine += L' ';
+            curLine += CellboardParts::VERTICAL_BORDER;
+        }
+
+        if (isSuccess)
+            curLine.SetTextColorToDefault();
     }
-
-    Console::SetTextColor(pastTextColor);
+    return textBlock;
 }
 
 void BaseBoardCell::Update()

@@ -9,10 +9,8 @@
 
 #include "Blinkable.h"
 #include "Console.h"
+#include "TextBlock.h"
 #include "Vector2.h"
-
-using Color = Console::Color;
-using RGB = Console::RGB;
 
 class ChessPiece : public Blinkable
 {
@@ -35,6 +33,12 @@ public:
     private:
         Key() noexcept = default;
     };
+
+private:
+    using RGB = TextBlock::RGB;
+    using Color = TextBlock::Color;
+    using Line = TextBlock::Line;
+
 protected:
     wchar_t _character;
     bool _isWhite;
@@ -44,14 +48,14 @@ protected:
     std::vector<std::vector<MovePosition>> _pathsForMoves;
 
 private:
-    static constexpr const Console::RGB* CAPTURABLE_PIECE_COLOR = &Console::Color::RED;
+    static constexpr const RGB* CAPTURABLE_PIECE_COLOR = &Color::RED;
     const RGB* _defaultPieceColor;
     bool _isAlive = true;
 
 public:
     ChessPiece(const Key& constructorKey, wchar_t type, bool isWhite, std::size_t pathsForMovesCount);
 
-    virtual ~ChessPiece();
+    virtual ~ChessPiece() = default;
     
     template <std::derived_from<ChessPiece> Piece>
     static std::unique_ptr<Piece> InitializeUniqueChessPiece(bool isWhite)
@@ -78,7 +82,7 @@ public:
     std::span<const MovePosition> GetFullPathForMove(int pathForMoveIndex) const;
     void SetIsCapturable(bool isCapturable);
     void SetPosition(Vector2 position) noexcept;
-    void DrawPiece() const;
+    void AddPiece(Line& line) const;
 
     void Update() override;
 protected:

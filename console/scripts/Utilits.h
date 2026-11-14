@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include "TextBlock.h"
 #include "Vector2.h"
 
 namespace Utilits
@@ -75,11 +76,5 @@ namespace Utilits
         }
 
         return bestIndex;
-    }
-
-    inline void DrawEmptyLine(std::size_t length)
-    {
-        for (std::size_t i = 0; i < length; ++i)
-            std::wcout << L' ';
     }
 }

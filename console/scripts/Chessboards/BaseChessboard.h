@@ -1,11 +1,8 @@
 #pragma once
 
-#include <algorithm>
-#include <concepts>
 #include <iostream>
 #include <memory>
 #include <ranges>
-#include <string>
 #include <vector>
 
 #include "AllEdgeCells.h"
@@ -13,13 +10,21 @@
 #include "CellsConfiguration.h"
 #include "ChessPiece.h"
 #include "Console.h"
-#include "IUpdatable.h"
+#include "ITextBlockManager.h"
+
 #include "Utilits.h"
 #include "Vector2.h"
 
-class BaseChessboard : public IUpdatable
+class BaseChessboard : public ITextBlockManager
 {
+protected:
+    using Corners = std::array<CornerEdgeCell, 4>;
+
 private:
+    using RGB = TextBlock::RGB;
+    using Color = TextBlock::Color;
+    using Line = TextBlock::Line;
+
     struct ChessboardParts final
     {
         static inline constexpr wchar_t TOP_BORDER = L'\u2580';  
@@ -48,11 +53,11 @@ private:
 public:
     const std::size_t CHESSBOARD_SIZE;
 
-protected:
-    using Corners = std::array<CornerEdgeCell, 4>;
-
 private:
+    const RGB* _chessboardTextColor = &Color::WHITE;
+    const RGB* _chessboardBGColor = &Color::GRAY;
     const std::size_t CHESSBOARD_SQUARE;
+    const Vector2 CHESSBOARD_SIZE_IN_CHARS;
 	std::vector<BaseBoardCell> _cells;
     ChessboardEdges _edges;
 
@@ -71,11 +76,14 @@ public:
     void SetSelectedCell(Vector2 position);
     void SetNextMarkedCell(Utilits::DeltaMove direction);
 
-    [[nodiscard]] bool CalculateAllowedMoves();
+    Vector2 GetSizeInChars() const noexcept override;
+
+    [[nodiscard]] 
+    bool CalculateAllowedMoves();
+    
     void ClearAllowedMoves();
 
-	void Update() override;
-
+    TextBlock BuildTextBlock(const TextBlock::RGB* textColor, const TextBlock::RGB* bgColor) const override;
 private:
 	void BuildChessboard();
 
@@ -89,10 +97,5 @@ private:
 
     void SortPositionsOfMarkedCells();
 
-    void DrawEdge(const CornerEdgeCell* leftCorner, 
-        const std::vector<HorizontalEdgeCell>& edge, 
-        const CornerEdgeCell* rightCorner,
-        const std::vector<EdgeConnector>& connectors) const;
-        
-	void DrawChessboard() const;
+    TextBlock BuildHorizontalEdge(bool isTopEdge) const;
 };

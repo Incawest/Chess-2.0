@@ -4,24 +4,29 @@
 #include <iostream>
 
 #include "Console.h"
+#include "ITextBlockBuilder.h"
 
 template<std::size_t width, std::size_t height>
 requires(width >= 1 && height >= 1)
-class BaseCell
+class BaseCell : public ITextBlockBuilder
 {
+protected:
+    using RGB = TextBlock::RGB;
+    using Color = TextBlock::Color;
+    using Line = TextBlock::Line;
 public:
     static constexpr std::size_t WIDTH = width;
     static constexpr std::size_t HEIGHT = height;
 
 protected:
-    static constexpr const Console::RGB* SELECTED_CELL_COLOR = &Console::Color::YELLOW;
-    const Console::RGB* _cellColor;
+    static constexpr const RGB* SELECTED_CELL_COLOR = &Color::YELLOW;
+    const RGB* _cellColor;
 
 private:
-    const Console::RGB* _unselectedCellColor;
+    const RGB* _unselectedCellColor;
 
 public:
-    explicit BaseCell(const Console::RGB* cellColor) noexcept : _unselectedCellColor{cellColor} 
+    explicit BaseCell(const RGB* cellColor) noexcept : _unselectedCellColor{cellColor} 
     {
         SetSelection(false);
     }
@@ -32,7 +37,7 @@ public:
     
     virtual ~BaseCell() = default;
 
-    void SetCellColor(const Console::RGB* cellColor) noexcept
+    void SetCellColor(const RGB* cellColor) noexcept
     {
         _unselectedCellColor = cellColor;
     }
@@ -41,6 +46,4 @@ public:
     {
         _cellColor = isSelected ? SELECTED_CELL_COLOR : _unselectedCellColor;
     }
-
-    virtual void DrawCell(std::size_t line) const = 0;
 };
