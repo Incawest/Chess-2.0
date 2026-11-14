@@ -2,10 +2,10 @@
 
 GameManagement::GameManagement()
 {
-	_mainMenu = std::make_unique<MainMenu>();
-	_startGameMenu = std::make_unique<StartGame>();
+	_mainMenu = std::make_shared<MainMenu>();
+	_startGameMenu = std::make_shared<StartGame>();
 
-	_activeWindow = _mainMenu.get();
+	_activeWindow = _mainMenu;
 
 	Console::RefreshConsole();
 }
@@ -20,28 +20,21 @@ GameManagement& GameManagement::GetGameManagement()
 
 void GameManagement::ProcessMenuAction(MenuAction action)
 {
-    switch (action)
-    {
-	case MenuAction::MainMenu:
-		_activeWindow = _mainMenu.get();
-		_activeWindow->NowActive();
-		break;
-    case MenuAction::StartGame:
-        _activeWindow = _startGameMenu.get();
-		_activeWindow->NowActive();
-        break;
-    case MenuAction::Exit:
-        _isGameRunning = false;
-        break;
-	default:
-		break;
+	if (action == MenuAction::MainMenu)
+	{
+		_activeWindow = _mainMenu;
 	}
-}
+	else if (action == MenuAction::StartGame)
+	{
+		_activeWindow = _startGameMenu;
+	}
+	else if (action == MenuAction::Exit)
+	{
+		_isGameRunning = false;
+	}
 
-void GameManagement::SetGUIConfines(int rowCnt, int colCnt)
-{
-	_minRowCnt = rowCnt;
-	_minColCnt = colCnt + 1;
+	if (auto window = _activeWindow.lock())
+		window->NowActive();
 }
 
 void GameManagement::Update()
@@ -52,12 +45,13 @@ void GameManagement::Update()
 		Console::ResetCaret();
 
 		bool isConsoleFit = false;
+		auto window = _activeWindow.lock();
 		
-		if (_activeWindow != nullptr)
+		if (window)
         {
             isConsoleFit = Console::IsThisFitInConsole(
-                _activeWindow->GetRequiredHeight(),
-                _activeWindow->GetRequiredWidth()
+                window->GetRequiredHeight(),
+                window->GetRequiredWidth()
             );
         }
 
@@ -67,36 +61,20 @@ void GameManagement::Update()
 			wasConsoleFit = isConsoleFit;
 		}
 
-		if (isConsoleFit && _activeWindow != nullptr)
+		if (isConsoleFit && window)
 		{
-			_activeWindow->Update();
+			window->Update();
+
+			if (auto menu = std::dynamic_pointer_cast<IMenuInput>(window))
+			{
+			    if (auto action = menu->HandleMenuSelect())
+			        ProcessMenuAction(*action);
+			}
 		}
 		else
 			std::wcout << L"Not enough space for GUI\033[J" << std::flush;
 
 		std::this_thread::sleep_for(_FRAME_DELAY_MIL_SEC);
-
-		if (_activeWindow != nullptr)
-		{
-			if (auto action = _activeWindow->HandleMenuSelect())
-        		ProcessMenuAction(*action);
-		}
 	}
 	Console::RefreshConsole();
-}
-
-void GameManagement::PickUpInput()
-{
-	if (_kbhit())
-	{
-		int inputCode = _getch();
-		if (inputCode == 27)
-			_isGameRunning = false;
-		else if (inputCode == 0 || inputCode == 224)
-		{
-			inputCode = _getch();
-			if(inputCode == 98)
-				Console::RefreshConsole();
-		}
-	}
 }

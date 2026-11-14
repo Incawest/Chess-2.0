@@ -4,43 +4,35 @@
 #include <vector>
 #include <algorithm>
 #include <optional>
-#include <unordered_map>
 #include <conio.h>
 
 #include "IUpdatable.h"
 #include "Console.h"
-
-enum class MenuAction
-{
-    MainMenu,
-    StartGame,
-    Exit
-};
+#include "MenuAction.h"
 
 class InfoWindowBase : public IUpdatable
 {
 protected:
-    int _totalWidth = 10;
-    int _totalHeight = 20;
+    int _totalWidth;
+    int _totalHeight;
 
     int _shiftAlongX = 1;
     int _shiftAlongY = 1;
 
-    int _countWindowRows = 6;
     std::vector<int> _boundaryIndices;
-    std::vector<std::wstring> _items;
 
     bool _isActive;
 
+    static inline constexpr int VIEWPORT_PADDING = 4;
+
 public:
-    InfoWindowBase(bool isActive = true);
+    explicit InfoWindowBase(bool isActive = true);
     virtual ~InfoWindowBase();
 
     int GetRequiredWidth() const;
     int GetRequiredHeight() const;
 
     virtual void PrintContent() const = 0;
-    virtual std::optional<MenuAction> HandleMenuSelect();
 
     void PrintFrame() const;
     void SetShift(int shiftAlongX, int shiftAlongY);

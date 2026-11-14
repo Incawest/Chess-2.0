@@ -12,23 +12,18 @@ void InfoWindowBase::NowActive()
 
 int InfoWindowBase::GetRequiredWidth() const
 {
-	return _totalWidth + 4;
+	return _shiftAlongX + _totalWidth + VIEWPORT_PADDING;
 }
 
 int InfoWindowBase::GetRequiredHeight() const
 {
-	return _totalHeight + 4;
+	return _shiftAlongY + _totalHeight + VIEWPORT_PADDING;
 }
 
 void InfoWindowBase::SetShift(int shiftAlongX, int shiftAlongY)
 {
     _shiftAlongX = shiftAlongX;
     _shiftAlongY = shiftAlongY;
-}
-
-std::optional<MenuAction> InfoWindowBase::HandleMenuSelect()
-{
-    return std::nullopt;
 }
 
 void InfoWindowBase::PrintFrame() const

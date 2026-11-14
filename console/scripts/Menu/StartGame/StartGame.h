@@ -1,9 +1,10 @@
 #pragma once
 
 #include "InfoWindowBase.h"
+#include "IMenuInput.h"
 #include "Chessboard.h"
 
-class StartGame : public InfoWindowBase
+class StartGame : public InfoWindowBase, public IMenuInput
 {
 private:
     std::unique_ptr<Chessboard> _chessBoard;

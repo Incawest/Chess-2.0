@@ -3,15 +3,18 @@
 MainMenu::MainMenu() : InfoWindowBase()
 {
     _items = {
-        L"Start game",
-        L"Inventory",
-        L"Shop",
-        L"Controls",
-        L"Exit",
+        { L"Start game", MenuAction::StartGame },
+        //{ L"Inventory", MenuAction::Inventory },
+        //{ L"Shop", MenuAction::Shop },
+        //{ L"Controls", MenuAction::Controls },
+        { L"Exit", MenuAction::Exit },
     };
+
     _title = L"Chess 2.0";
-    _totalWidth = GetMaxWidth() + 4;
-    _totalHeight = _items.size() + 2;
+
+    _totalWidth = GetMaxWidth() + _LEFT_RIGHT_INDENTS;
+    _totalHeight = _items.size() + _UP_BOTTOM_INDENTS;
+
     _boundaryIndices = {1};
 }
 
@@ -28,10 +31,10 @@ int MainMenu::GetMaxWidth() const
 {
     size_t maxLength = 0;
 
-    for (const std::wstring& item : _items)
+    for (const auto& item : _items)
     {
-        if (item.length() > maxLength)
-            maxLength = item.length();
+        if (item.text.length() > maxLength)
+            maxLength = item.text.length();
     }
 
     maxLength = (_title.length() > maxLength) ? _title.length() : maxLength;
@@ -41,31 +44,18 @@ int MainMenu::GetMaxWidth() const
 
 void MainMenu::PrintContent() const
 {
-    int titleX = _shiftAlongX
-        + 1
+    const int titleX = _shiftAlongX + 1
         + (_totalWidth - _title.length()) / 2;
 
     Console::MoveCaret(titleX, _shiftAlongY + 1);
     std::wcout << _title;
 
-    for (size_t i = 0; i < _items.size(); ++i)
+    const int itemX = _shiftAlongX + 2;
+
+    for (int i = 0; i < _items.size(); ++i)
     {
-        if (i == _selectedIndex)
-        {
-            int itemX = _shiftAlongX + 2;
-            int itemY = _shiftAlongY + 3 + i;
-
-            Console::MoveCaret(itemX, itemY);
-            std::wcout << L'>' << _items[i];
-        }
-        else
-        {
-            int itemX = _shiftAlongX + 2;
-            int itemY = _shiftAlongY + 3 + i;
-
-            Console::MoveCaret(itemX, itemY);
-            std::wcout << L' ' << _items[i];
-        }
+        Console::MoveCaret(itemX, _shiftAlongY + 3 + i);
+        std::wcout << (i == _selectedIndex ? L'>' : L' ') << _items[i].text;
     }
 
     std::wcout << std::flush;
@@ -77,22 +67,23 @@ std::optional<MenuAction> MainMenu::HandleMenuSelect()
     {
         int key = _getch();
 
-        if (key == 0 || key == 224)
+        if (key == Keys::SPECIAL_1 || 
+            key == Keys::SPECIAL_2)
         {
             key = _getch();
 
-            if (key == 72)
+            if (key == Keys::ARROW_UP)
             {
                 if (_selectedIndex > 0)
                     --_selectedIndex;
             }
-            if (key == 80)
+            if (key == Keys::ARROW_DOWN)
             {
                 if (_selectedIndex < (_items.size()-1))
                     ++_selectedIndex;
             }
         }
-        else if (key == 13)
+        else if (key == Keys::ENTER)
         {
             return SelectItem();
         }
@@ -102,15 +93,8 @@ std::optional<MenuAction> MainMenu::HandleMenuSelect()
 
 std::optional<MenuAction> MainMenu::SelectItem() const
 {
-    switch (_selectedIndex)
-    {
-    case 0:
-        return MenuAction::StartGame;
+    if (_selectedIndex >= 0 && _selectedIndex < _items.size())
+        return _items[_selectedIndex].action;
 
-    case 4:
-        return MenuAction::Exit;
-
-    default:
-        return std::nullopt;
-    }
+    return std::nullopt;
 }

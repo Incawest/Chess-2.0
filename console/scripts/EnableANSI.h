@@ -1,32 +1,28 @@
 #pragma once
 
 #include <windows.h>
-#include <fcntl.h>
 #include <io.h>
-#include <cstdio>
+#include <fcntl.h>
 
 inline bool EnableConsoleUnicodeAndANSI()
 {
     HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-
     if (hOut == INVALID_HANDLE_VALUE || hOut == nullptr)
         return false;
 
-    DWORD outputMode = 0;
-
-    if (!GetConsoleMode(hOut, &outputMode))
+    DWORD mode = 0;
+    if (!GetConsoleMode(hOut, &mode))
         return false;
 
-    outputMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+    bool ok = true;
 
-    if (!SetConsoleMode(hOut, outputMode))
-        return false;
+    if (!SetConsoleMode(hOut, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+        ok = false;
 
-    if (_setmode(_fileno(stdout), _O_U16TEXT) == -1)
-        return false;
+    if (_setmode(_fileno(stdout), _O_U16TEXT) == -1 ||
+        _setmode(_fileno(stderr), _O_U16TEXT) == -1 ||
+        _setmode(_fileno(stdin), _O_U16TEXT) == -1) 
+        ok = false;
 
-    if (_setmode(_fileno(stdin), _O_U16TEXT) == -1)
-        return false;
-
-    return true;
+    return ok;
 }

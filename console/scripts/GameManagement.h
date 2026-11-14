@@ -8,19 +8,18 @@
 #include "Chessboard.h"
 #include "AllMenuWindows.h"
 #include "Console.h"
+#include "MenuAction.h"
 
 class GameManagement : public IUpdatable
 {
 private:
     static inline const auto _FRAME_DELAY_MIL_SEC = std::chrono::milliseconds(100);
     bool _isGameRunning = true;
-    static inline int _minRowCnt = 26;
-    static inline int _minColCnt = 52;
 
-    std::unique_ptr<MainMenu> _mainMenu;
-    std::unique_ptr<StartGame> _startGameMenu;
+    std::shared_ptr<MainMenu> _mainMenu;
+    std::shared_ptr<StartGame> _startGameMenu;
 
-    InfoWindowBase* _activeWindow = nullptr;
+    std::weak_ptr<InfoWindowBase> _activeWindow;
 
 public:
     GameManagement(const GameManagement& other) = delete;
@@ -28,12 +27,9 @@ public:
 
     void ProcessMenuAction(MenuAction action);
 
-    static void SetGUIConfines(int rowCnt, int colCnt);
 	void Update() override;
 
 private:
     GameManagement();
     ~GameManagement();
-    
-    void PickUpInput();
 };
